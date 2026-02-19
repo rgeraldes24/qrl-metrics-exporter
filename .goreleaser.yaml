@@ -1,5 +1,5 @@
 version: 2
-project_name: ethereum-metrics-exporter
+project_name: qrl-metrics-exporter
 
 before:
   hooks:
@@ -8,7 +8,7 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
-    binary: ethereum-metrics-exporter-{{.Version}}
+    binary: qrl-metrics-exporter-{{.Version}}
     goos:
       - linux
       - windows
@@ -24,7 +24,7 @@ builds:
       - goos: windows
         goarch: arm64
     ldflags:
-      - -s -w -X github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/version.Release={{.Tag}} -X github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/version.GitCommit={{.ShortCommit}}
+      - -s -w -X github.com/theQRL/qrl-metrics-exporter/pkg/exporter/version.Release={{.Tag}} -X github.com/theQRL/qrl-metrics-exporter/pkg/exporter/version.GitCommit={{.ShortCommit}}
     mod_timestamp: "{{ .CommitTimestamp }}"
 checksum:
   name_template: 'checksums.txt'

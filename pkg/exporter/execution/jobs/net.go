@@ -4,18 +4,18 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/onrik/ethrpc"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // Net exposes metrics defined by the net module.
 type Net struct {
-	client       *ethclient.Client
+	client       *qrlclient.Client
 	api          api.ExecutionClient
-	ethRPCClient *ethrpc.EthRPC
+	qrlRPCClient *qrlrpc.QRLRPC
 	log          logrus.FieldLogger
 	PeerCount    prometheus.Gauge
 }
@@ -33,7 +33,7 @@ func (n *Net) RequiredModules() []string {
 }
 
 // NewNet returns a new Net instance.
-func NewNet(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCClient *ethrpc.EthRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) Net {
+func NewNet(client *qrlclient.Client, internalAPI api.ExecutionClient, qrlRPCClient *qrlrpc.QRLRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) Net {
 	namespace += "_net"
 
 	constLabels["module"] = NameWeb3
@@ -41,7 +41,7 @@ func NewNet(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCCli
 	return Net{
 		client:       client,
 		api:          internalAPI,
-		ethRPCClient: ethRPCClient,
+		qrlRPCClient: qrlRPCClient,
 		log:          log.WithField("module", NameNet),
 		PeerCount: prometheus.NewGauge(
 			prometheus.GaugeOpts{
@@ -68,8 +68,8 @@ func (n *Net) Start(ctx context.Context) {
 }
 
 //nolint:unparam // context will be used in the future
-func (n *Net) tick(ctx context.Context) {
-	count, err := n.ethRPCClient.NetPeerCount()
+func (n *Net) tick(context.Context) {
+	count, err := n.qrlRPCClient.NetPeerCount()
 	if err != nil {
 		n.log.WithError(err).Error("Failed to get peer count")
 	} else {

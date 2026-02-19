@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/theQRL/go-zond/common/hexutil"
 )
 
 func TestTXPoolStatus_UnmarshalJSON(t *testing.T) {
@@ -15,7 +15,7 @@ func TestTXPoolStatus_UnmarshalJSON(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Geth format with hex strings",
+			name: "Hex string format",
 			input: `{
 				"pending": "0x128",
 				"queued": "0x0"
@@ -23,30 +23,6 @@ func TestTXPoolStatus_UnmarshalJSON(t *testing.T) {
 			want: TXPoolStatus{
 				Pending: hexutil.Uint64(0x128), // 296 in decimal
 				Queued:  hexutil.Uint64(0x0),   // 0 in decimal
-			},
-			wantErr: false,
-		},
-		{
-			name: "Nethermind format with numbers",
-			input: `{
-				"pending": 16,
-				"queued": 0
-			}`,
-			want: TXPoolStatus{
-				Pending: hexutil.Uint64(16),
-				Queued:  hexutil.Uint64(0),
-			},
-			wantErr: false,
-		},
-		{
-			name: "Mixed format",
-			input: `{
-				"pending": "0x10",
-				"queued": 5
-			}`,
-			want: TXPoolStatus{
-				Pending: hexutil.Uint64(0x10), // 16 in decimal
-				Queued:  hexutil.Uint64(5),
 			},
 			wantErr: false,
 		},
@@ -88,7 +64,7 @@ func TestTXPoolStatus_UnmarshalJSON(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "Negative number",
+			name: "Numeric value rejected",
 			input: `{
 				"pending": -1,
 				"queued": 0
@@ -128,7 +104,7 @@ func TestTXPoolStatus_UnmarshalJSON_FullResponse(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Geth full RPC response",
+			name: "Gzond full RPC response",
 			input: `{
 				"jsonrpc": "2.0",
 				"id": 1,
@@ -140,22 +116,6 @@ func TestTXPoolStatus_UnmarshalJSON_FullResponse(t *testing.T) {
 			want: TXPoolStatus{
 				Pending: hexutil.Uint64(0x128), // 296 in decimal
 				Queued:  hexutil.Uint64(0x0),
-			},
-			wantErr: false,
-		},
-		{
-			name: "Nethermind full RPC response",
-			input: `{
-				"jsonrpc": "2.0",
-				"result": {
-					"pending": 16,
-					"queued": 0
-				},
-				"id": 1
-			}`,
-			want: TXPoolStatus{
-				Pending: hexutil.Uint64(16),
-				Queued:  hexutil.Uint64(0),
 			},
 			wantErr: false,
 		},

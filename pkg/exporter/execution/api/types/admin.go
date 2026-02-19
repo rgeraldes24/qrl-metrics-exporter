@@ -2,10 +2,8 @@ package types
 
 import (
 	"encoding/json"
-	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/theQRL/go-zond/common"
 )
 
 // NodeInfo is the information about the node.
@@ -20,26 +18,24 @@ type NodeInfo struct {
 		Listener  int `json:"listener"`
 	} `json:"ports"`
 	Protocols struct {
-		Eth EthProtocol `json:"eth"`
+		QRL QRLProtocol `json:"qrl"`
 	} `json:"protocols"`
 }
 
-// EthProtocol is the information about the eth protocol.
-type EthProtocol struct {
-	Difficulty *big.Int    `json:"difficulty"`
-	Genesis    common.Hash `json:"genesis"`
-	Head       common.Hash `json:"head"`
-	NetworkID  int         `json:"networkID"`
+// QRLProtocol is the information about the qrl protocol.
+type QRLProtocol struct {
+	Genesis   common.Hash `json:"genesis"`
+	Head      common.Hash `json:"head"`
+	NetworkID int         `json:"networkID"`
 }
 
 // UnmarshalJSON implements the json.Unmarshaler interface, overriding to handle
 // clients returning difficulty as a number or string prefixed with 0x.
-func (e *EthProtocol) UnmarshalJSON(data []byte) error {
+func (e *QRLProtocol) UnmarshalJSON(data []byte) error {
 	var v struct {
-		Difficulty *big.Int    `json:"difficulty"`
-		Genesis    common.Hash `json:"genesis"`
-		Head       common.Hash `json:"head"`
-		NetworkID  int         `json:"networkID"`
+		Genesis   common.Hash `json:"genesis"`
+		Head      common.Hash `json:"head"`
+		NetworkID int         `json:"networkID"`
 	}
 
 	var objMap map[string]*json.RawMessage
@@ -49,29 +45,9 @@ func (e *EthProtocol) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	var difficultyString string
-	if err := json.Unmarshal(*objMap["difficulty"], &difficultyString); err != nil {
-		// Its probably just an int, return the entire thing like normal
-		err = json.Unmarshal(data, &v)
-		if err != nil {
-			return err
-		}
-	} else {
-		// Try and parse the string back in to a big.Int
-		if v.Difficulty, err = hexutil.DecodeBig(difficultyString); err != nil {
-			return err
-		}
-	}
-
-	e.Difficulty = v.Difficulty
 	e.Genesis = v.Genesis
 	e.Head = v.Head
 	e.NetworkID = v.NetworkID
 
 	return nil
-}
-
-// Difficulty returns the difficulty.
-func (n *NodeInfo) Difficulty() *big.Int {
-	return n.Protocols.Eth.Difficulty
 }

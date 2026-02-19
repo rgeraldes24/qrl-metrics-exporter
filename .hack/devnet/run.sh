@@ -9,27 +9,27 @@ else
 fi
 
 ## Run devnet using kurtosis
-ENCLAVE_NAME="${ENCLAVE_NAME:-ethereum-metrics-exporter}"
-ETHEREUM_PACKAGE="${ETHEREUM_PACKAGE:-github.com/ethpandaops/ethereum-package}"
+ENCLAVE_NAME="${ENCLAVE_NAME:-qrl-metrics-exporter}"
+QRL_PACKAGE="${QRL_PACKAGE:-github.com/theQRL/qrl-package}"
 if kurtosis enclave inspect "$ENCLAVE_NAME" > /dev/null; then
   echo "Kurtosis enclave '$ENCLAVE_NAME' is already up."
 else
-  kurtosis run "$ETHEREUM_PACKAGE" \
+  kurtosis run "$QRL_PACKAGE" \
   --image-download always \
   --enclave "$ENCLAVE_NAME" \
   --args-file "${config_file}"
 fi
 
-## Generate ethereum-metrics-exporter config
+## Generate qrl-metrics-exporter config
 ENCLAVE_UUID=$(kurtosis enclave inspect "$ENCLAVE_NAME" --full-uuids | grep 'UUID:' | awk '{print $2}')
 
 FIRST_BEACON_NODE=$(docker ps -aq -f "label=kurtosis_enclave_uuid=$ENCLAVE_UUID" \
               -f "label=com.kurtosistech.app-id=kurtosis" \
-              -f "label=com.kurtosistech.custom.ethereum-package.client-type=beacon" | tac | head -n1)
+              -f "label=com.kurtosistech.custom.qrl-package.client-type=beacon" | tac | head -n1)
 
 FIRST_EXECUTION_NODE=$(docker ps -aq -f "label=kurtosis_enclave_uuid=$ENCLAVE_UUID" \
               -f "label=com.kurtosistech.app-id=kurtosis" \
-              -f "label=com.kurtosistech.custom.ethereum-package.client-type=execution" | tac | head -n1)
+              -f "label=com.kurtosistech.custom.qrl-package.client-type=execution" | tac | head -n1)
 
 ## Get data volumes and their host paths
 BEACON_DATA_VOLUME=$(docker inspect "$FIRST_BEACON_NODE" --format='{{range .Mounts}}{{if eq .Type "volume"}}{{.Name}}{{"\n"}}{{end}}{{end}}' | grep '^data-' | head -n1)
@@ -74,7 +74,7 @@ if [ -n "$EXECUTION_DATA_VOLUME" ]; then
   fi
 fi
 
-cat <<EOF > "${__dir}/generated-ethereum-metrics-exporter-config.yaml"
+cat <<EOF > "${__dir}/generated-qrl-metrics-exporter-config.yaml"
 consensus:
   enabled: true
   url: "$(
@@ -96,7 +96,7 @@ execution:
   )"
   name: "execution-client"
   modules:
-    - "eth"
+    - "qrl"
     - "net"
     - "web3"
     - "txpool"
@@ -141,12 +141,12 @@ diskUsage:
     [ -n "$EXECUTION_DATA_HOST_PATH" ] && echo "
   - $EXECUTION_DATA_HOST_PATH"
     [ -z "$BEACON_DATA_HOST_PATH" ] && [ -z "$EXECUTION_DATA_HOST_PATH" ] && echo "
-  - /data/ethereum"
+  - /data/qrl"
   )
 EOF
 
 cat <<EOF
 ============================================================================================================
-ethereum-metrics-exporter config at ${__dir}/generated-ethereum-metrics-exporter-config.yaml
+qrl-metrics-exporter config at ${__dir}/generated-qrl-metrics-exporter-config.yaml
 ============================================================================================================
 EOF

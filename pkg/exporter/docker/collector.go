@@ -12,7 +12,7 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/sirupsen/logrus"
 
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/filesystem"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/filesystem"
 )
 
 const (

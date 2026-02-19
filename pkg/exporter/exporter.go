@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"github.com/ethpandaops/beacon/pkg/beacon"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/disk"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/docker"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/disk"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/docker"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution"
 )
 
-// Exporter defines the Ethereum Metrics Exporter interface
+// Exporter defines the QRL Metrics Exporter interface
 type Exporter interface {
 	// Init initialises the exporter
 	Init(ctx context.Context) error
@@ -30,7 +30,7 @@ func NewExporter(log logrus.FieldLogger, conf *Config) Exporter {
 	return &exporter{
 		log:       log.WithField("component", "exporter"),
 		config:    conf,
-		namespace: "eth",
+		namespace: "qrl",
 	}
 }
 
@@ -226,7 +226,7 @@ func (e *exporter) bootstrapConsensusClients(_ context.Context) error {
 	e.beacon = beacon.NewNode(e.log, &beacon.Config{
 		Addr: e.config.Consensus.URL,
 		Name: e.config.Consensus.Name,
-	}, "eth_con", opts)
+	}, "qrl_con", opts)
 
 	return nil
 }

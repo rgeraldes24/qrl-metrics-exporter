@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -13,8 +13,8 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ethereum-metrics-exporter",
-	Short: "A tool to export the state of ethereum nodes",
+	Use:   "qrl-metrics-exporter",
+	Short: "A tool to export the state of qrl nodes",
 	Run: func(cmd *cobra.Command, args []string) {
 		initCommon()
 
@@ -53,7 +53,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ethereum-metrics-exporter.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.qrl-metrics-exporter.yaml)")
 	rootCmd.PersistentFlags().IntVarP(&metricsPort, "metrics-port", "", DefaultMetricsPort, "Port to serve Prometheus metrics on")
 	rootCmd.PersistentFlags().StringVarP(&executionURL, "execution-url", "", "", "(optional) URL to the execution node")
 	rootCmd.PersistentFlags().StringVarP(&consensusURL, "consensus-url", "", "", "(optional) URL to the consensus node")

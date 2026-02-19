@@ -8,7 +8,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/filesystem"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/filesystem"
 )
 
 // ContainerInfo holds container configuration with metadata.

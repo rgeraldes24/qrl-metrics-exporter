@@ -4,18 +4,18 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/onrik/ethrpc"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // Web3 exposes metrics defined by the Web3 module.
 type Web3 struct {
-	client          *ethclient.Client
+	client          *qrlclient.Client
 	api             api.ExecutionClient
-	ethRPCClient    *ethrpc.EthRPC
+	qrlRPCClient    *qrlrpc.QRLRPC
 	log             logrus.FieldLogger
 	ClientVersion   prometheus.GaugeVec
 	previousVersion string
@@ -34,7 +34,7 @@ func (w *Web3) RequiredModules() []string {
 }
 
 // NewWeb3 returns a new Web3 instance.
-func NewWeb3(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCClient *ethrpc.EthRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) Web3 {
+func NewWeb3(client *qrlclient.Client, internalAPI api.ExecutionClient, qrlRPCClient *qrlrpc.QRLRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) Web3 {
 	namespace += "_web3"
 
 	constLabels["module"] = NameWeb3
@@ -42,7 +42,7 @@ func NewWeb3(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCCl
 	return Web3{
 		client:       client,
 		api:          internalAPI,
-		ethRPCClient: ethRPCClient,
+		qrlRPCClient: qrlRPCClient,
 		log:          log.WithField("module", NameWeb3),
 		ClientVersion: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
@@ -72,8 +72,8 @@ func (w *Web3) Start(ctx context.Context) {
 }
 
 //nolint:unparam // context will be used in the future
-func (w *Web3) tick(ctx context.Context) {
-	clientVersion, err := w.ethRPCClient.Web3ClientVersion()
+func (w *Web3) tick(context.Context) {
+	clientVersion, err := w.qrlRPCClient.Web3ClientVersion()
 	if err != nil {
 		w.log.WithError(err).Error("Failed to get node info")
 	} else {

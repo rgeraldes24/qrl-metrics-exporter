@@ -4,10 +4,10 @@ import (
 	"time"
 
 	"github.com/ethpandaops/beacon/pkg/human"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/docker"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/docker"
 )
 
-// Config holds the configuration for the ethereum sync status tool.
+// Config holds the configuration for the qrl sync status tool.
 type Config struct {
 	// Execution is the execution node to use.
 	Execution ExecutionNode `yaml:"execution"`
@@ -21,7 +21,7 @@ type Config struct {
 	Pair PairConfig `yaml:"pair"`
 }
 
-// ConsensusNode represents a single ethereum consensus client.
+// ConsensusNode represents a single qrl consensus client.
 type ConsensusNode struct {
 	Enabled     bool        `yaml:"enabled"`
 	Name        string      `yaml:"name"`
@@ -34,7 +34,7 @@ type EventStream struct {
 	Topics  []string `yaml:"topics"`
 }
 
-// ExecutionNode represents a single ethereum execution client.
+// ExecutionNode represents a single qrl execution client.
 type ExecutionNode struct {
 	Enabled bool     `yaml:"enabled"`
 	Name    string   `yaml:"name"`
@@ -96,7 +96,7 @@ func DefaultConfig() *Config {
 			Enabled: true,
 			Name:    "execution",
 			URL:     "http://localhost:8545",
-			Modules: []string{"eth", "net", "web3"},
+			Modules: []string{"qrl", "net", "web3"},
 		},
 		Consensus: ConsensusNode{
 			Enabled: true,

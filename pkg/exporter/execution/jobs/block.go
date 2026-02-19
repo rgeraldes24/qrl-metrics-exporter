@@ -7,18 +7,18 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/onrik/ethrpc"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // BlockMetrics exposes metrics on the head/safest block.
 type BlockMetrics struct {
-	client       *ethclient.Client
+	client       *qrlclient.Client
 	api          api.ExecutionClient
-	ethRPCClient *ethrpc.EthRPC
+	qrlRPCClient *qrlrpc.QRLRPC
 	log          logrus.FieldLogger
 
 	MostRecentBlockNumber prometheus.GaugeVec
@@ -55,7 +55,7 @@ func (b *BlockMetrics) RequiredModules() []string {
 }
 
 // NewBlockMetrics returns a new Block metrics instance.
-func NewBlockMetrics(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCClient *ethrpc.EthRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) BlockMetrics {
+func NewBlockMetrics(client *qrlclient.Client, internalAPI api.ExecutionClient, qrlRPCClient *qrlrpc.QRLRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) BlockMetrics {
 	constLabels["module"] = NameBlock
 
 	namespace = namespace + "_" + NameBlock
@@ -63,7 +63,7 @@ func NewBlockMetrics(client *ethclient.Client, internalAPI api.ExecutionClient, 
 	return BlockMetrics{
 		client:       client,
 		api:          internalAPI,
-		ethRPCClient: ethRPCClient,
+		qrlRPCClient: qrlRPCClient,
 		log:          log.WithField("module", NameBlock),
 
 		MostRecentBlockNumber: *prometheus.NewGaugeVec(
@@ -200,7 +200,7 @@ func (b *BlockMetrics) getHeadBlockStats(ctx context.Context) error {
 	b.currentHeadBlockNumber = mostRecentBlockNumber
 	b.MostRecentBlockNumber.WithLabelValues("head").Set(float64(mostRecentBlockNumber))
 
-	block, err := b.ethRPCClient.EthGetBlockByNumber(int(mostRecentBlockNumber), false)
+	block, err := b.qrlRPCClient.QRLGetBlockByNumber(int(mostRecentBlockNumber), false)
 	if err != nil {
 		return err
 	}

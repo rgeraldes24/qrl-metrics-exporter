@@ -4,18 +4,18 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/onrik/ethrpc"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // GeneralMetrics exposes metrics that otherwise don't fit in to a specific module.
 type GeneralMetrics struct {
-	client       *ethclient.Client
+	client       *qrlclient.Client
 	api          api.ExecutionClient
-	ethRPCClient *ethrpc.EthRPC
+	qrlRPCClient *qrlrpc.QRLRPC
 	log          logrus.FieldLogger
 	GasPrice     prometheus.Gauge
 	NetworkID    prometheus.Gauge
@@ -35,13 +35,13 @@ func (g *GeneralMetrics) RequiredModules() []string {
 }
 
 // NewGeneralMetrics returns a new General metrics instance.
-func NewGeneralMetrics(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCClient *ethrpc.EthRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) GeneralMetrics {
+func NewGeneralMetrics(client *qrlclient.Client, internalAPI api.ExecutionClient, qrlRPCClient *qrlrpc.QRLRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) GeneralMetrics {
 	constLabels["module"] = NameGeneral
 
 	return GeneralMetrics{
 		client:       client,
 		api:          internalAPI,
-		ethRPCClient: ethRPCClient,
+		qrlRPCClient: qrlRPCClient,
 		log:          log.WithField("module", NameGeneral),
 		GasPrice: prometheus.NewGauge(
 			prometheus.GaugeOpts{

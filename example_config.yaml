@@ -7,7 +7,7 @@ execution:
   url: "http://localhost:8545"
   name: "execution-client"
   modules:
-    - "eth"
+    - "qrl"
     - "net"
     - "web3"
     - "txpool"
@@ -15,7 +15,7 @@ diskUsage:
   enabled: false
   interval: 60m  # Polling interval (in minutes) - accepts time units: s, m, h
   directories:
-  - /data/ethereum
+  - /data/qrl
 docker:
   enabled: false
   endpoint: "unix:///var/run/docker.sock"
@@ -26,23 +26,23 @@ docker:
     imageName: true
     imageTag: true
   containers:
-    - name: "geth"
+    - name: "gzond"
       type: "execution"
       filesystem:
         enabled: true
-    - name: "lighthouse"
+    - name: "qrysm"
       type: "consensus"
       filesystem:
         enabled: true
 
   #  # Auto-discover all volumes (simplest)
-  #  - name: "geth"
+  #  - name: "gzond"
   #    type: "execution"
   #    filesystem:
   #      enabled: true
 
   #  # Monitor all but disable specific mounts
-  #  - name: "lighthouse"
+  #  - name: "qrysm"
   #    type: "beacon"
   #    volumes:
   #      - name: "*"
@@ -51,8 +51,8 @@ docker:
   #        monitor: false
 
   #  # Explicit configuration
-  #  - name: "prysm"
+  #  - name: "qrysm"
   #    volumes:
-  #      - name: "prysm-data"
+  #      - name: "qrysm-data"
   #        path: "/data"
   #        monitor: true

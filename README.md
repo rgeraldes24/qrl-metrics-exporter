@@ -1,37 +1,37 @@
-# 🦄 Ethereum Metrics Exporter 🦄
+# QRL Metrics Exporter
 
-> A Prometheus metrics exporter for Ethereum execution & consensus nodes
+> A Prometheus metrics exporter for QRL execution & consensus nodes
 
-Ethereum client implementations expose extensive Prometheus metrics however there is minimal standardization around the metrics structure. This makes observability across multiple clients a painful experience. This exporter hopes to help alleviate this problem by creating a client-agnostic set of metrics that operators can run without any additional configuration to dashboards or alerting.
+QRL client implementations expose extensive Prometheus metrics however there is minimal standardization around the metrics structure. This makes observability across multiple clients a painful experience. This exporter hopes to help alleviate this problem by creating a client-agnostic set of metrics that operators can run without any additional configuration to dashboards or alerting.
 
 To provide these client-agnostic metrics the exporter relies entirely on these well-defined APIs:
 - Execution clients
-  - [JSON-RPC](https://geth.ethereum.org/docs/rpc/server)
+  - [JSON-RPC](https://gzond.theQRL.org/docs/rpc/server)
 - Consensus clients
-  - [Beacon Node API](https://ethereum.github.io/beacon-APIs/#/)
+  - [Beacon Node API](https://qrl.github.io/beacon-APIs/#/)
 
 Naturally this means that the exporter is limited to metrics that are exposed by these APIs.
 
 ## Built With
 
 * [pf13/cobra-cli](https://github.com/spf13/cobra-cli)
-* [ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)
+* [theQRL/go-zond](https://github.com/theQRL/go-zond)
 * [attestantio/go-eth2-client](github.com/attestantio/go-eth2-client)
 ## Usage
 
 ```
-A tool to export the state of ethereum nodes
+A tool to export the state of qrl nodes
 
 Usage:
-  ethereum-metrics-exporter [flags]
+  qrl-metrics-exporter [flags]
 
 Flags:
-      --config string                   config file (default is $HOME/.ethereum-metrics-exporter.yaml)
+      --config string                   config file (default is $HOME/.qrl-metrics-exporter.yaml)
       --consensus-url string            (optional) URL to the consensus node
       --disk-usage-interval string      (optional) interval for disk usage metrics collection (e.g. 1h, 5m, 30s)
       --execution-modules strings       (optional) execution modules that are enabled on the node
       --execution-url string            (optional) URL to the execution node
-  -h, --help                            help for ethereum-metrics-exporter
+  -h, --help                            help for qrl-metrics-exporter
       --metrics-port int                Port to serve Prometheus metrics on (default 9090)
       --monitored-directories strings   (optional) directories to monitor for disk usage
   -t, --toggle                          Help message for toggle
@@ -42,7 +42,7 @@ Flags:
 * [Single instance dashboard](https://grafana.com/grafana/dashboards/16277)
 
 ### Docker
-Available as a docker image at `ethpandaops/ethereum-metrics-exporter`
+Available as a docker image at `qrledger/qrl-metrics-exporter`
 
 #### Images
 - `latest` - distroless, multiarch
@@ -52,34 +52,34 @@ Available as a docker image at `ethpandaops/ethereum-metrics-exporter`
 
 **Quick start**
 ```
-docker run -d -it --name ethereum-metrics-exporter -p 9090:9090 -it ethpandaops/ethereum-metrics-exporter --consensus-url=http://localhost:5052 --execution-url=http://localhost:8545
+docker run -d -it --name qrl-metrics-exporter -p 9090:9090 -it qrledger/qrl-metrics-exporter --consensus-url=http://localhost:5052 --execution-url=http://localhost:8545
 ````
 **With a config file**
 ```
-docker run -d -it --name ethereum-metrics-exporter -v $HOST_DIR_CHANGE_ME/config.yaml:/opt/exporter/config.yaml -p 9090:9090 -it ethpandaops/ethereum-metrics-exporter --config /opt/exporter/config.yaml
+docker run -d -it --name qrl-metrics-exporter -v $HOST_DIR_CHANGE_ME/config.yaml:/opt/exporter/config.yaml -p 9090:9090 -it qrledger/qrl-metrics-exporter --config /opt/exporter/config.yaml
 
 ```
 ### Kubernetes via Helm
-[Read more](https://github.com/skylenet/ethereum-helm-charts/tree/master/charts/ethereum-metrics-exporter)
+[Read more](https://github.com/skylenet/qrl-helm-charts/tree/master/charts/qrl-metrics-exporter)
 ```
-helm repo add ethereum-helm-charts https://ethpandaops.github.io/ethereum-helm-charts
+helm repo add qrl-helm-charts https://qrl.github.io/qrl-helm-charts
 
-helm install ethereum-metrics-exporter ethereum-helm-charts/ethereum-metrics-exporter -f your_values.yaml
+helm install qrl-metrics-exporter qrl-helm-charts/qrl-metrics-exporter -f your_values.yaml
 ```
 
 ### Standalone
 **Downloading a release**
-Available [here](https://github.com/ethpandaops/ethereum-metrics-exporter/releases)
+Available [here](https://github.com/theQRL/qrl-metrics-exporter/releases)
 
 **Building yourself (requires Go)**
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/ethpandaops/ethereum-metrics-exporter.git
+   git clone https://github.com/theQRL/qrl-metrics-exporter.git
    ```
 2. Change directories
    ```sh
-   cd ./ethereum-metrics-exporter
+   cd ./qrl-metrics-exporter
    ```
 3. Build the binary
    ```sh
@@ -87,7 +87,7 @@ Available [here](https://github.com/ethpandaops/ethereum-metrics-exporter/releas
    ```
 4. Run the exporter
    ```sh
-   ./build/ethereum-metrics-exporter
+   ./build/qrl-metrics-exporter
    ```
 
 ## Development

@@ -5,19 +5,19 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api/types"
-	"github.com/onrik/ethrpc"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api/types"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // Admin exposes metrics defined by the admin module.
 type Admin struct {
-	client       *ethclient.Client
+	client       *qrlclient.Client
 	api          api.ExecutionClient
-	ethRPCClient *ethrpc.EthRPC
+	qrlRPCClient *qrlrpc.QRLRPC
 	log          logrus.FieldLogger
 	NodeInfo     prometheus.GaugeVec
 	Port         prometheus.GaugeVec
@@ -37,7 +37,7 @@ func (a *Admin) RequiredModules() []string {
 }
 
 // NewAdmin returns a new Admin instance.
-func NewAdmin(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCClient *ethrpc.EthRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) Admin {
+func NewAdmin(client *qrlclient.Client, internalAPI api.ExecutionClient, qrlRPCClient *qrlrpc.QRLRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) Admin {
 	namespace += "_admin"
 
 	constLabels["module"] = NameAdmin
@@ -45,7 +45,7 @@ func NewAdmin(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCC
 	return Admin{
 		client:       client,
 		api:          internalAPI,
-		ethRPCClient: ethRPCClient,
+		qrlRPCClient: qrlRPCClient,
 		log:          log.WithField("module", NameAdmin),
 		NodeInfo: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
@@ -122,7 +122,7 @@ func (a *Admin) ObserveNodeInfo(nodeInfo *types.NodeInfo) {
 		nodeInfo.Name,
 		fmt.Sprint(nodeInfo.Ports.Discovery),
 		fmt.Sprint(nodeInfo.Ports.Listener),
-		fmt.Sprint(nodeInfo.Protocols.Eth.NetworkID),
+		fmt.Sprint(nodeInfo.Protocols.QRL.NetworkID),
 	).Set(1)
 
 	// Ports

@@ -9,13 +9,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api/types"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/common/hexutil"
+	"github.com/theQRL/go-zond/p2p"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api/types"
 )
 
-// ExecutionClient is an interface for executing RPC calls to the Ethereum node.
+// ExecutionClient is an interface for executing RPC calls to the QRL node.
 type ExecutionClient interface {
 	// AdminNodeInfo returns information about the node.
 	AdminNodeInfo(ctx context.Context) (*types.NodeInfo, error)

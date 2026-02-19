@@ -1,9 +1,9 @@
 participants:
-  - el_type: geth
-    el_image: ethereum/client-go:stable
-    cl_type: lighthouse
-    cl_image: sigp/lighthouse:latest
-    count: 3
+  - el_type: gzond
+    el_image: qrledger/client-go:stable
+    cl_type: qrysm
+    cl_image: qrledger/qrysm-beacon
+    count: 2
 network_params:
-  seconds_per_slot: 12
+  seconds_per_slot: 60
 persistent: true

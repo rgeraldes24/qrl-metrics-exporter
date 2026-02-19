@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/onrik/ethrpc"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // Node represents an execution node.
@@ -27,9 +27,9 @@ type Node interface {
 type node struct {
 	name         string
 	url          string
-	client       *ethclient.Client
+	client       *qrlclient.Client
 	internalAPI  api.ExecutionClient
-	ethrpcClient *ethrpc.EthRPC
+	qrlrpcClient *qrlrpc.QRLRPC
 	log          logrus.FieldLogger
 	metrics      Metrics
 }
@@ -37,15 +37,15 @@ type node struct {
 // NewExecutionNode returns a new execution node.
 func NewExecutionNode(ctx context.Context, log logrus.FieldLogger, namespace, nodeName, url string, enabledModules []string) (Node, error) {
 	internalAPI := api.NewExecutionClient(ctx, log, url)
-	client, _ := ethclient.Dial(url)
-	ethrpcClient := ethrpc.New(url)
-	metrics := NewMetrics(client, internalAPI, ethrpcClient, log, nodeName, namespace, enabledModules)
+	client, _ := qrlclient.Dial(url)
+	qrlrpcClient := qrlrpc.New(url)
+	metrics := NewMetrics(client, internalAPI, qrlrpcClient, log, nodeName, namespace, enabledModules)
 
 	node := &node{
 		name:         nodeName,
 		url:          url,
 		log:          log,
-		ethrpcClient: ethrpcClient,
+		qrlrpcClient: qrlrpcClient,
 		internalAPI:  internalAPI,
 		client:       client,
 		metrics:      metrics,
@@ -67,7 +67,7 @@ func (e *node) Bootstrapped() bool {
 }
 
 func (e *node) Bootstrap(ctx context.Context) error {
-	client, err := ethclient.Dial(e.url)
+	client, err := qrlclient.Dial(e.url)
 	if err != nil {
 		return err
 	}

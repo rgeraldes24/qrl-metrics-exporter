@@ -4,18 +4,18 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/onrik/ethrpc"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // SyncStatus exposes metrics about the sync status of the node.
 type SyncStatus struct {
-	client        *ethclient.Client
+	client        *qrlclient.Client
 	api           api.ExecutionClient
-	ethRPCClient  *ethrpc.EthRPC
+	qrlRPCClient  *qrlrpc.QRLRPC
 	log           logrus.FieldLogger
 	Percentage    prometheus.Gauge
 	CurrentBlock  prometheus.Gauge
@@ -33,7 +33,7 @@ func (s *SyncStatus) Name() string {
 }
 
 func (s *SyncStatus) RequiredModules() []string {
-	return []string{"eth"}
+	return []string{"qrl"}
 }
 
 type syncingStatus struct {
@@ -52,7 +52,7 @@ func (s *syncingStatus) Percent() float64 {
 }
 
 // NewSyncStatus returns a new SyncStatus instance.
-func NewSyncStatus(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCClient *ethrpc.EthRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) SyncStatus {
+func NewSyncStatus(client *qrlclient.Client, internalAPI api.ExecutionClient, qrlRPCClient *qrlrpc.QRLRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) SyncStatus {
 	constLabels["module"] = NameSyncStatus
 
 	namespace += "_sync"
@@ -60,7 +60,7 @@ func NewSyncStatus(client *ethclient.Client, internalAPI api.ExecutionClient, et
 	return SyncStatus{
 		client:       client,
 		api:          internalAPI,
-		ethRPCClient: ethRPCClient,
+		qrlRPCClient: qrlRPCClient,
 		log:          log.WithField("module", NameSyncStatus),
 		Percentage: prometheus.NewGauge(
 			prometheus.GaugeOpts{

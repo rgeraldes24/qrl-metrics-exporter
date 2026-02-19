@@ -3,12 +3,12 @@ package execution
 import (
 	"context"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/jobs"
-	"github.com/onrik/ethrpc"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/jobs"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // Metrics exposes Execution layer metrics
@@ -31,20 +31,20 @@ type metrics struct {
 }
 
 // NewMetrics creates a new execution Metrics instance
-func NewMetrics(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCClient *ethrpc.EthRPC, log logrus.FieldLogger, nodeName, namespace string, enabledModules []string) Metrics {
+func NewMetrics(client *qrlclient.Client, internalAPI api.ExecutionClient, qrlRPCClient *qrlrpc.QRLRPC, log logrus.FieldLogger, nodeName, namespace string, enabledModules []string) Metrics {
 	constLabels := make(prometheus.Labels)
-	constLabels["ethereum_role"] = "execution"
+	constLabels["qrl_role"] = "execution"
 	constLabels["node_name"] = nodeName
 
 	m := &metrics{
 		log:            log,
-		generalMetrics: jobs.NewGeneralMetrics(client, internalAPI, ethRPCClient, log, namespace, constLabels),
-		syncMetrics:    jobs.NewSyncStatus(client, internalAPI, ethRPCClient, log, namespace, constLabels),
-		txpoolMetrics:  jobs.NewTXPool(client, internalAPI, ethRPCClient, log, namespace, constLabels),
-		adminMetrics:   jobs.NewAdmin(client, internalAPI, ethRPCClient, log, namespace, constLabels),
-		blockMetrics:   jobs.NewBlockMetrics(client, internalAPI, ethRPCClient, log, namespace, constLabels),
-		web3Metrics:    jobs.NewWeb3(client, internalAPI, ethRPCClient, log, namespace, constLabels),
-		netMetrics:     jobs.NewNet(client, internalAPI, ethRPCClient, log, namespace, constLabels),
+		generalMetrics: jobs.NewGeneralMetrics(client, internalAPI, qrlRPCClient, log, namespace, constLabels),
+		syncMetrics:    jobs.NewSyncStatus(client, internalAPI, qrlRPCClient, log, namespace, constLabels),
+		txpoolMetrics:  jobs.NewTXPool(client, internalAPI, qrlRPCClient, log, namespace, constLabels),
+		adminMetrics:   jobs.NewAdmin(client, internalAPI, qrlRPCClient, log, namespace, constLabels),
+		blockMetrics:   jobs.NewBlockMetrics(client, internalAPI, qrlRPCClient, log, namespace, constLabels),
+		web3Metrics:    jobs.NewWeb3(client, internalAPI, qrlRPCClient, log, namespace, constLabels),
+		netMetrics:     jobs.NewNet(client, internalAPI, qrlRPCClient, log, namespace, constLabels),
 
 		enabledJobs: make(map[string]bool),
 	}

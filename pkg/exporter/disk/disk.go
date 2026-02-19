@@ -7,7 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/filesystem"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/filesystem"
 )
 
 // UsageMetrics reports disk usage metrics

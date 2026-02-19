@@ -41,8 +41,8 @@ jobs:
 
           echo "Releasing version: $VERSION"
 
-          git config --global user.email "ethpandaopsbot@ethereum.org"
-          git config --global user.name "ethpandaopsbot"
+          git config --global user.email "qrlbot@theqrl.org"
+          git config --global user.name "qrlbot"
 
           # Log the short commit SHA
           SHORT_COMMIT=$(git rev-parse --short HEAD)

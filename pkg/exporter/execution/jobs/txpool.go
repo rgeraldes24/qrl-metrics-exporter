@@ -4,18 +4,18 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/execution/api"
-	"github.com/onrik/ethrpc"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/qrlclient"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/execution/api"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/qrlrpc"
 )
 
 // TXPool collects metrics around the transaction pool.
 type TXPool struct {
-	client       *ethclient.Client
+	client       *qrlclient.Client
 	api          api.ExecutionClient
-	ethRPCClient *ethrpc.EthRPC
+	qrlRPCClient *qrlrpc.QRLRPC
 	log          logrus.FieldLogger
 	Transactions prometheus.GaugeVec
 }
@@ -33,7 +33,7 @@ func (t *TXPool) RequiredModules() []string {
 }
 
 // NewTXPool creates a new TXPool instance.
-func NewTXPool(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPCClient *ethrpc.EthRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) TXPool {
+func NewTXPool(client *qrlclient.Client, internalAPI api.ExecutionClient, qrlRPCClient *qrlrpc.QRLRPC, log logrus.FieldLogger, namespace string, constLabels map[string]string) TXPool {
 	constLabels["module"] = NameTxPool
 
 	namespace += "_txpool"
@@ -41,7 +41,7 @@ func NewTXPool(client *ethclient.Client, internalAPI api.ExecutionClient, ethRPC
 	return TXPool{
 		client:       client,
 		api:          internalAPI,
-		ethRPCClient: ethRPCClient,
+		qrlRPCClient: qrlRPCClient,
 		log:          log.WithField("module", NameGeneral),
 		Transactions: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{

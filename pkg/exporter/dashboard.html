@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethereum Metrics Exporter</title>
+    <title>QRL Metrics Exporter</title>
     <style>
         /* EMBEDDED_CSS */
     </style>
@@ -22,7 +22,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Ethereum Metrics Exporter</h1>
+        <h1>QRL Metrics Exporter</h1>
 
         <div class="info-banner">
             <div class="info-content">
@@ -67,7 +67,7 @@
         <div id="metricsGrid" class="metrics-grid" style="display: none;"></div>
 
         <footer class="footer">
-            Powered by 🐼 <a href="https://github.com/ethpandaops/ethereum-metrics-exporter" target="_blank">ethpandaops/ethereum-metrics-exporter</a>
+            Powered by 🐼 <a href="https://github.com/theQRL/qrl-metrics-exporter" target="_blank">theQRL/qrl-metrics-exporter</a>
         </footer>
     </div>
 
@@ -110,10 +110,10 @@
         }
 
         function getMetricCategory(metricName) {
-            if (metricName.startsWith('eth_exe_')) return 'execution';
-            if (metricName.startsWith('eth_con_')) return 'consensus';
-            if (metricName.startsWith('eth_docker_')) return 'docker';
-            if (metricName.startsWith('eth_disk_')) return 'disk';
+            if (metricName.startsWith('qrl_exe_')) return 'execution';
+            if (metricName.startsWith('qrl_con_')) return 'consensus';
+            if (metricName.startsWith('qrl_docker_')) return 'docker';
+            if (metricName.startsWith('qrl_disk_')) return 'disk';
             return 'others';
         }
 

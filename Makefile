@@ -1,6 +1,6 @@
-# ethereum-metrics-exporter Makefile
+# qrl-metrics-exporter Makefile
 
-PROJECT_NAME := ethereum-metrics-exporter
+PROJECT_NAME := qrl-metrics-exporter
 GO := go
 GOTEST := $(GO) test
 GOVET := $(GO) vet
@@ -11,7 +11,7 @@ GORELEASER := goreleaser
 VERSION ?= $(shell git describe --tags --always --dirty)
 COMMIT ?= $(shell git rev-parse --short HEAD)
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
-LDFLAGS := -ldflags "-s -w -X github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/version.Release=$(VERSION) -X github.com/ethpandaops/ethereum-metrics-exporter/pkg/exporter/version.GitCommit=$(COMMIT)"
+LDFLAGS := -ldflags "-s -w -X github.com/theQRL/qrl-metrics-exporter/pkg/exporter/version.Release=$(VERSION) -X github.com/theQRL/qrl-metrics-exporter/pkg/exporter/version.GitCommit=$(COMMIT)"
 
 # Output directory
 BUILD_DIR := ./build
@@ -147,7 +147,7 @@ devnet:
 
 .PHONY: devnet-run
 devnet-run: devnet
-	go run main.go --config .hack/devnet/generated-ethereum-metrics-exporter-config.yaml
+	go run main.go --config .hack/devnet/generated-qrl-metrics-exporter-config.yaml
 
 .PHONY: devnet-clean
 devnet-clean:

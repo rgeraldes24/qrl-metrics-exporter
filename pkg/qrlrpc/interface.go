@@ -1,0 +1,47 @@
+package qrlrpc
+
+import (
+	"math/big"
+)
+
+type QRLAPI interface {
+	Web3ClientVersion() (string, error)
+	Web3Sha3(data []byte) (string, error)
+	NetVersion() (string, error)
+	NetListening() (bool, error)
+	NetPeerCount() (int, error)
+	QRLProtocolVersion() (string, error)
+	QRLSyncing() (*Syncing, error)
+	QRLCoinbase() (string, error)
+	QRLMining() (bool, error)
+	QRLGasPrice() (big.Int, error)
+	QRLAccounts() ([]string, error)
+	QRLBlockNumber() (int, error)
+	QRLGetBalance(address, block string) (big.Int, error)
+	QRLGetStorageAt(data string, position int, tag string) (string, error)
+	QRLGetTransactionCount(address, block string) (int, error)
+	QRLGetBlockTransactionCountByHash(hash string) (int, error)
+	QRLGetBlockTransactionCountByNumber(number int) (int, error)
+	QRLGetCode(address, block string) (string, error)
+	QRLSign(address, data string) (string, error)
+	QRLSendTransaction(transaction T) (string, error)
+	QRLSendRawTransaction(data string) (string, error)
+	QRLCall(transaction T, tag string) (string, error)
+	QRLEstimateGas(transaction T) (int, error)
+	QRLGetBlockByHash(hash string, withTransactions bool) (*Block, error)
+	QRLGetBlockByNumber(number int, withTransactions bool) (*Block, error)
+	QRLGetTransactionByHash(hash string) (*Transaction, error)
+	QRLGetTransactionByBlockHashAndIndex(blockHash string, transactionIndex int) (*Transaction, error)
+	QRLGetTransactionByBlockNumberAndIndex(blockNumber, transactionIndex int) (*Transaction, error)
+	QRLGetTransactionReceipt(hash string) (*TransactionReceipt, error)
+	QRLGetCompilers() ([]string, error)
+	QRLNewFilter(params FilterParams) (string, error)
+	QRLNewBlockFilter() (string, error)
+	QRLNewPendingTransactionFilter() (string, error)
+	QRLUninstallFilter(filterID string) (bool, error)
+	QRLGetFilterChanges(filterID string) ([]Log, error)
+	QRLGetFilterLogs(filterID string) ([]Log, error)
+	QRLGetLogs(params FilterParams) ([]Log, error)
+}
+
+var _ QRLAPI = (*QRLRPC)(nil)
