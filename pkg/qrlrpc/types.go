@@ -165,8 +165,6 @@ type Block struct {
 	TransactionsRoot string
 	StateRoot        string
 	Miner            string
-	Difficulty       big.Int
-	TotalDifficulty  big.Int
 	ExtraData        string
 	Size             int
 	GasLimit         int
@@ -255,8 +253,6 @@ type proxyBlockWithTransactions struct {
 	TransactionsRoot string             `json:"transactionsRoot"`
 	StateRoot        string             `json:"stateRoot"`
 	Miner            string             `json:"miner"`
-	Difficulty       hexBig             `json:"difficulty"`
-	TotalDifficulty  hexBig             `json:"totalDifficulty"`
 	ExtraData        string             `json:"extraData"`
 	Size             hexInt             `json:"size"`
 	GasLimit         hexInt             `json:"gasLimit"`
@@ -280,8 +276,6 @@ type proxyBlockWithoutTransactions struct {
 	TransactionsRoot string   `json:"transactionsRoot"`
 	StateRoot        string   `json:"stateRoot"`
 	Miner            string   `json:"miner"`
-	Difficulty       hexBig   `json:"difficulty"`
-	TotalDifficulty  hexBig   `json:"totalDifficulty"`
 	ExtraData        string   `json:"extraData"`
 	Size             hexInt   `json:"size"`
 	GasLimit         hexInt   `json:"gasLimit"`
@@ -302,8 +296,6 @@ func (proxy *proxyBlockWithoutTransactions) toBlock() Block {
 		TransactionsRoot: proxy.TransactionsRoot,
 		StateRoot:        proxy.StateRoot,
 		Miner:            proxy.Miner,
-		Difficulty:       big.Int(proxy.Difficulty),
-		TotalDifficulty:  big.Int(proxy.TotalDifficulty),
 		ExtraData:        proxy.ExtraData,
 		Size:             int(proxy.Size),
 		GasLimit:         int(proxy.GasLimit),

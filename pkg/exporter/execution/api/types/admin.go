@@ -30,7 +30,7 @@ type QRLProtocol struct {
 }
 
 // UnmarshalJSON implements the json.Unmarshaler interface, overriding to handle
-// clients returning difficulty as a number or string prefixed with 0x.
+// clients returning string prefixed with 0x.
 func (e *QRLProtocol) UnmarshalJSON(data []byte) error {
 	var v struct {
 		Genesis   common.Hash `json:"genesis"`

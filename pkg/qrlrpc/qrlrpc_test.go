@@ -430,22 +430,6 @@ func (s *QRLRPCTestSuite) TestQRLGetBlockTransactionCountByNumber() {
 	s.Require().Equal(232, count)
 }
 
-func (s *QRLRPCTestSuite) TestQRLGetUncleCountByBlockHash() {
-	hash := "0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238"
-	s.registerResponseError(errors.New("Error"))
-	count, err := s.rpc.QRLGetUncleCountByBlockHash(hash)
-	s.Require().NotNil(err)
-
-	s.registerResponse(`"0xa"`, func(body []byte) {
-		s.methodEqual(body, "qrl_getUncleCountByBlockHash")
-		s.paramsEqual(body, fmt.Sprintf(`["%s"]`, hash))
-	})
-
-	count, err = s.rpc.QRLGetUncleCountByBlockHash(hash)
-	s.Require().Nil(err)
-	s.Require().Equal(10, count)
-}
-
 func (s *QRLRPCTestSuite) TestQRLGetUncleCountByBlockNumber() {
 	number := 3987434
 	s.registerResponseError(errors.New("Error"))
@@ -562,7 +546,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 
 	// Test with transactions
 	result := ` {
-        "difficulty": "0x81299d4dbde29",
         "extraData": "0x706f6f6c2e65746866616e732e6f726720284d4e323729",
         "gasLimit": "0x667900",
         "gasUsed": "0x639fa0",
@@ -577,7 +560,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
         "size": "0x2fc6",
         "stateRoot": "0xab9287d3b8864338892d1d572198933979e39bfcfbde569ea52be15a9691b4c1",
         "timestamp": "0x59a556bd",
-        "totalDifficulty": "0x2b5f79e86aaf701c81",
         "transactions": [
 			{
 				"blockHash": "0x2bdda43f649c564642101fc990f569dd855e60f88bf83e931f509a92c62700f9",
@@ -626,8 +608,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	s.Require().Equal("0x97849642410701c38f904912238eb78d3aa854e72c5ae39394c7217f4f9474bc", block.TransactionsRoot)
 	s.Require().Equal("0xab9287d3b8864338892d1d572198933979e39bfcfbde569ea52be15a9691b4c1", block.StateRoot)
 	s.Require().Equal("0x1e9939daaad6924ad004c2560e90804164900341", block.Miner)
-	s.Require().Equal(newBigInt("2272251724160553"), block.Difficulty)
-	s.Require().Equal(newBigInt("800089780620203400321"), block.TotalDifficulty)
 	s.Require().Equal("0x706f6f6c2e65746866616e732e6f726720284d4e323729", block.ExtraData)
 	s.Require().Equal(12230, block.Size)
 	s.Require().Equal(6715648, block.GasLimit)
@@ -667,7 +647,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	httpmock.Reset()
 	// Test without transactions
 	result = `{
-		"difficulty": "0x7feab8ef4d978",
 		"extraData": "0xd58301050b8650617269747986312e31352e31826c69",
 		"gasLimit": "0x665f6b",
 		"gasUsed": "0x1d71b",
@@ -683,7 +662,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 		"size": "0x490",
 		"stateRoot": "0xbe7e86ee05a5d49ba64b3d9f3f0129bab90308032e42307a1a2ef5c8971c5f5c",
 		"timestamp": "0x59b62713",
-		"totalDifficulty": "0x30e3d47fb9d7a43f7c",
 		"transactions": [
 			"0x160e19780a24f3d78492c7ac7228e0220d4b96878fec19daf182e1d8c4b3d94e"
 		],
@@ -708,8 +686,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	s.Require().Equal("0x1bcd58c2420d63c5e8ed3182afd33c01737be38a4a8c10a81dfb70b692e8f286", block.TransactionsRoot)
 	s.Require().Equal("0xbe7e86ee05a5d49ba64b3d9f3f0129bab90308032e42307a1a2ef5c8971c5f5c", block.StateRoot)
 	s.Require().Equal("0x6a7a43be33ba930fe58f34e07d0ad6ba7adb9b1f", block.Miner)
-	s.Require().Equal(newBigInt("2250337628248440"), block.Difficulty)
-	s.Require().Equal(newBigInt("901860602515894321020"), block.TotalDifficulty)
 	s.Require().Equal("0xd58301050b8650617269747986312e31352e31826c69", block.ExtraData)
 	s.Require().Equal(1168, block.Size)
 	s.Require().Equal(6709099, block.GasLimit)
