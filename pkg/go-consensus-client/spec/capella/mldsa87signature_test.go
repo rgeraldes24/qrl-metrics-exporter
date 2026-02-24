@@ -1,4 +1,4 @@
-// Copyright © 2021 Attestant Limited.
+// Copyright © 2024 Attestant Limited.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -11,10 +11,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package v1
+package capella_test
 
-//nolint:revive
-// Need to `go install github.com/ferranbt/fastssz/sszgen@latest` for this to work.
-//go:generate rm -f signedvalidatorregistration_ssz.go validatorregistration_ssz.go
-//go:generate sszgen -suffix ssz -path . -include ../../spec/capella -objs SignedValidatorRegistration,ValidatorRegistration
-//go:generate goimports -w signedvalidatorregistration_ssz.go validatorregistration_ssz.go
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
+)
+
+func TestZeroMLDSA87Signature(t *testing.T) {
+	zeroSignature := &capella.MLDSA87Signature{}
+	require.True(t, zeroSignature.IsZero())
+
+	nonZeroSignature := &capella.MLDSA87Signature{0x01}
+	require.False(t, nonZeroSignature.IsZero())
+}

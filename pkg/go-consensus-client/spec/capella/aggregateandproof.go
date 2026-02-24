@@ -29,7 +29,7 @@ import (
 type AggregateAndProof struct {
 	AggregatorIndex ValidatorIndex
 	Aggregate       *Attestation
-	SelectionProof  BLSSignature `ssz-size:"96"`
+	SelectionProof  MLDSA87Signature `ssz-size:"4627"`
 }
 
 // aggregateAndProofJSON is the spec representation of the struct.

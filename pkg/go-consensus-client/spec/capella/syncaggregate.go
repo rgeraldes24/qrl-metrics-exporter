@@ -20,34 +20,39 @@ import (
 	"fmt"
 	"strings"
 
-	bitfield "github.com/OffchainLabs/go-bitfield"
 	"github.com/goccy/go-yaml"
 	"github.com/pkg/errors"
+	bitfield "github.com/theQRL/go-bitfield"
 )
 
 // SyncAggregate is the QRL sync aggregate structure.
 type SyncAggregate struct {
-	SyncCommitteeBits      bitfield.Bitvector512 `dynssz-size:"SYNC_COMMITTEE_SIZE/8" ssz-size:"64"`
-	SyncCommitteeSignature BLSSignature          `ssz-size:"96"`
+	SyncCommitteeBits       bitfield.Bitvector16 `dynssz-size:"SYNC_COMMITTEE_SIZE/8" ssz-size:"2"`
+	SyncCommitteeSignatures []MLDSA87Signature   `ssz-max:"16" ssz-size:"?,4627"`
 }
 
 // syncAggregateJSON is the spec representation of the struct.
 type syncAggregateJSON struct {
-	SyncCommitteeBits      string `json:"sync_committee_bits"`
-	SyncCommitteeSignature string `json:"sync_committee_signature"`
+	SyncCommitteeBits       string   `json:"sync_committee_bits"`
+	SyncCommitteeSignatures []string `json:"sync_committee_signatures"`
 }
 
 // syncAggregateYAML is the spec representation of the struct.
 type syncAggregateYAML struct {
-	SyncCommitteeBits      string `yaml:"sync_committee_bits"`
-	SyncCommitteeSignature string `yaml:"sync_committee_signature"`
+	SyncCommitteeBits       string   `yaml:"sync_committee_bits"`
+	SyncCommitteeSignatures []string `yaml:"sync_committee_signatures"`
 }
 
 // MarshalJSON implements json.Marshaler.
 func (s *SyncAggregate) MarshalJSON() ([]byte, error) {
+	signatures := make([]string, len(s.SyncCommitteeSignatures))
+	for i := range s.SyncCommitteeSignatures {
+		signatures[i] = fmt.Sprintf("%#x", s.SyncCommitteeSignatures[i])
+	}
+
 	return json.Marshal(&syncAggregateJSON{
-		SyncCommitteeBits:      fmt.Sprintf("%#x", s.SyncCommitteeBits.Bytes()),
-		SyncCommitteeSignature: fmt.Sprintf("%#x", s.SyncCommitteeSignature),
+		SyncCommitteeBits:       fmt.Sprintf("%#x", s.SyncCommitteeBits.Bytes()),
+		SyncCommitteeSignatures: signatures,
 	})
 }
 
@@ -70,36 +75,43 @@ func (s *SyncAggregate) unpack(syncAggregateJSON *syncAggregateJSON) error {
 	if err != nil {
 		return errors.Wrap(err, "invalid value for sync committee bits")
 	}
+	if len(syncCommitteeBits) != 2 {
+		return errors.New("incorrect length for sync committee bits")
+	}
 
 	s.SyncCommitteeBits = syncCommitteeBits
 
-	if syncAggregateJSON.SyncCommitteeSignature == "" {
-		return errors.New("sync committee signature missing")
+	if len(syncAggregateJSON.SyncCommitteeSignatures) == 0 {
+		return errors.New("sync committee signatures missing")
 	}
 
-	syncCommitteeSignature, err := hex.DecodeString(strings.TrimPrefix(syncAggregateJSON.SyncCommitteeSignature, "0x"))
-	if err != nil {
-		return errors.Wrap(err, "invalid value for sync committee signature")
-	}
+	s.SyncCommitteeSignatures = make([]MLDSA87Signature, len(syncAggregateJSON.SyncCommitteeSignatures))
+	for i := range syncAggregateJSON.SyncCommitteeSignatures {
+		syncCommitteeSignature, err := hex.DecodeString(strings.TrimPrefix(syncAggregateJSON.SyncCommitteeSignatures[i], "0x"))
+		if err != nil {
+			return errors.Wrap(err, "invalid value for sync committee signature")
+		}
 
-	if len(syncCommitteeSignature) < 96 {
-		return errors.New("sync committee signature short")
-	}
+		if len(syncCommitteeSignature) != SignatureLength {
+			return errors.New("incorrect length for sync committee signature")
+		}
 
-	if len(syncCommitteeSignature) > 96 {
-		return errors.New("sync committee signature long")
+		copy(s.SyncCommitteeSignatures[i][:], syncCommitteeSignature)
 	}
-
-	copy(s.SyncCommitteeSignature[:], syncCommitteeSignature)
 
 	return nil
 }
 
 // MarshalYAML implements yaml.Marshaler.
 func (s *SyncAggregate) MarshalYAML() ([]byte, error) {
+	signatures := make([]string, len(s.SyncCommitteeSignatures))
+	for i := range s.SyncCommitteeSignatures {
+		signatures[i] = fmt.Sprintf("%#x", s.SyncCommitteeSignatures[i])
+	}
+
 	yamlBytes, err := yaml.MarshalWithOptions(&syncAggregateYAML{
-		SyncCommitteeBits:      fmt.Sprintf("%#x", s.SyncCommitteeBits.Bytes()),
-		SyncCommitteeSignature: fmt.Sprintf("%#x", s.SyncCommitteeSignature),
+		SyncCommitteeBits:       fmt.Sprintf("%#x", s.SyncCommitteeBits.Bytes()),
+		SyncCommitteeSignatures: signatures,
 	}, yaml.Flow(true))
 	if err != nil {
 		return nil, err

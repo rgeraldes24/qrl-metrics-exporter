@@ -198,9 +198,9 @@ func (v *VersionedProposal) Graffiti() ([32]byte, error) {
 }
 
 // RandaoReveal returns the RANDAO reveal of the proposal.
-func (v *VersionedProposal) RandaoReveal() (capella.BLSSignature, error) {
+func (v *VersionedProposal) RandaoReveal() (capella.MLDSA87Signature, error) {
 	if !v.bodyPresent() {
-		return capella.BLSSignature{}, ErrDataMissing
+		return capella.MLDSA87Signature{}, ErrDataMissing
 	}
 
 	switch v.Version {
@@ -211,7 +211,7 @@ func (v *VersionedProposal) RandaoReveal() (capella.BLSSignature, error) {
 
 		return v.Capella.Body.RANDAOReveal, nil
 	default:
-		return capella.BLSSignature{}, ErrUnsupportedVersion
+		return capella.MLDSA87Signature{}, ErrUnsupportedVersion
 	}
 }
 

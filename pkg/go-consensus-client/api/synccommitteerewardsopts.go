@@ -26,5 +26,5 @@ type SyncCommitteeRewardsOpts struct {
 	Indices []capella.ValidatorIndex
 	// PubKeys is a list of validator public keys to restrict the returned values.
 	// If no public keys are supplied then no filter will be applied.
-	PubKeys []capella.BLSPubKey
+	PubKeys []capella.MLDSA87PubKey
 }

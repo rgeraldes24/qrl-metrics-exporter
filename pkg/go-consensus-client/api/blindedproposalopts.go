@@ -22,7 +22,7 @@ type BlindedProposalOpts struct {
 	// Slot is the slot for which the proposal should be fetched.
 	Slot capella.Slot
 	// RandaoReveal is the RANDAO reveal for the proposal.
-	RandaoReveal capella.BLSSignature
+	RandaoReveal capella.MLDSA87Signature
 	// Graffiti is the graffiti to be included in the beacon block body.
 	Graffiti [32]byte
 	// SkipRandaoVerification is true if we do not want the server to verify our RANDAO reveal.

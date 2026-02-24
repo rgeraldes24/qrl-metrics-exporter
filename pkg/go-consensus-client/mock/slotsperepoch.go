@@ -19,5 +19,5 @@ import (
 
 // SlotsPerEpoch provides the slots per epoch of the chain.
 func (*Service) SlotsPerEpoch(_ context.Context) (uint64, error) {
-	return 32, nil
+	return 128, nil
 }

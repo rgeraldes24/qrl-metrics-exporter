@@ -45,20 +45,20 @@ func (v *VersionedBeaconBlock) Slot() (capella.Slot, error) {
 }
 
 // RandaoReveal returns the RANDAO reveal of the beacon block.
-func (v *VersionedBeaconBlock) RandaoReveal() (capella.BLSSignature, error) {
+func (v *VersionedBeaconBlock) RandaoReveal() (capella.MLDSA87Signature, error) {
 	switch v.Version {
 	case DataVersionCapella:
 		if v.Capella == nil {
-			return capella.BLSSignature{}, errors.New("no capella block")
+			return capella.MLDSA87Signature{}, errors.New("no capella block")
 		}
 
 		if v.Capella.Body == nil {
-			return capella.BLSSignature{}, errors.New("no capella block body")
+			return capella.MLDSA87Signature{}, errors.New("no capella block body")
 		}
 
 		return v.Capella.Body.RANDAOReveal, nil
 	default:
-		return capella.BLSSignature{}, errors.New("unknown version")
+		return capella.MLDSA87Signature{}, errors.New("unknown version")
 	}
 }
 

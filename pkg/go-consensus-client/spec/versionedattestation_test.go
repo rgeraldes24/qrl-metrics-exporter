@@ -19,7 +19,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/OffchainLabs/go-bitfield"
+	"github.com/theQRL/go-bitfield"
 	"github.com/stretchr/testify/assert"
 	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec"
 	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"

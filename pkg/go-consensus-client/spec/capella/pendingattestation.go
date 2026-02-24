@@ -21,14 +21,14 @@ import (
 	"strconv"
 	"strings"
 
-	bitfield "github.com/OffchainLabs/go-bitfield"
 	"github.com/goccy/go-yaml"
 	"github.com/pkg/errors"
+	bitfield "github.com/theQRL/go-bitfield"
 )
 
 // PendingAttestation is the QRL pending attestation structure.
 type PendingAttestation struct {
-	AggregationBits bitfield.Bitlist `ssz-max:"2048"`
+	AggregationBits bitfield.Bitlist `ssz-max:"128"`
 	Data            *AttestationData
 	InclusionDelay  Slot
 	ProposerIndex   ValidatorIndex

@@ -27,7 +27,7 @@ import (
 // SyncCommitteeDuty is the data regarding which validators have the duty to contribute to sync committees in a slot.
 type SyncCommitteeDuty struct {
 	// PubKey is the public key of the validator that should contribute.
-	PubKey capella.BLSPubKey
+	PubKey capella.MLDSA87PubKey
 	// ValidatorIndex is the index of the validator that should contribute.
 	ValidatorIndex capella.ValidatorIndex
 	// ValidatorSyncCommitteeIndices is the index of the validator in the list of validators in the committee.

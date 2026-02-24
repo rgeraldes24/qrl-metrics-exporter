@@ -21,41 +21,26 @@ import (
 	"github.com/pkg/errors"
 )
 
-// BLSSignature is a BLS12-381 signature.
-type BLSSignature [96]byte
+// MLDSA87Signature is a ML-DSA-87 signature.
+type MLDSA87Signature [4627]byte
 
 // SignatureLength is the number of bytes in a signature.
-const SignatureLength = 96
+const SignatureLength = 4627
 
-var (
-	emptyBLSSignature    = BLSSignature{}
-	infinityBLSSignature = BLSSignature{
-		0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	}
-)
+var emptyMLDSA87Signature = MLDSA87Signature{}
 
 // IsZero returns true if the signature is zero.
-func (s BLSSignature) IsZero() bool {
-	return bytes.Equal(s[:], emptyBLSSignature[:])
-}
-
-// IsInfinity returns true if the signature is infinity.
-func (s BLSSignature) IsInfinity() bool {
-	return bytes.Equal(s[:], infinityBLSSignature[:])
+func (s MLDSA87Signature) IsZero() bool {
+	return bytes.Equal(s[:], emptyMLDSA87Signature[:])
 }
 
 // String returns a string version of the structure.
-func (s BLSSignature) String() string {
+func (s MLDSA87Signature) String() string {
 	return fmt.Sprintf("%#x", s)
 }
 
 // Format formats the signature.
-func (s BLSSignature) Format(state fmt.State, v rune) {
+func (s MLDSA87Signature) Format(state fmt.State, v rune) {
 	format := string(v)
 	switch v {
 	case 's':
@@ -72,7 +57,7 @@ func (s BLSSignature) Format(state fmt.State, v rune) {
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
-func (s *BLSSignature) UnmarshalJSON(input []byte) error {
+func (s *MLDSA87Signature) UnmarshalJSON(input []byte) error {
 	if len(input) == 0 {
 		return errors.New("input missing")
 	}
@@ -102,12 +87,12 @@ func (s *BLSSignature) UnmarshalJSON(input []byte) error {
 }
 
 // MarshalJSON implements json.Marshaler.
-func (s BLSSignature) MarshalJSON() ([]byte, error) {
+func (s MLDSA87Signature) MarshalJSON() ([]byte, error) {
 	return fmt.Appendf(nil, `"%#x"`, s), nil
 }
 
 // UnmarshalYAML implements yaml.Unmarshaler.
-func (s *BLSSignature) UnmarshalYAML(input []byte) error {
+func (s *MLDSA87Signature) UnmarshalYAML(input []byte) error {
 	if len(input) == 0 {
 		return errors.New("input missing")
 	}
@@ -137,6 +122,6 @@ func (s *BLSSignature) UnmarshalYAML(input []byte) error {
 }
 
 // MarshalYAML implements yaml.Marshaler.
-func (s BLSSignature) MarshalYAML() ([]byte, error) {
+func (s MLDSA87Signature) MarshalYAML() ([]byte, error) {
 	return fmt.Appendf(nil, `'%#x'`, s), nil
 }

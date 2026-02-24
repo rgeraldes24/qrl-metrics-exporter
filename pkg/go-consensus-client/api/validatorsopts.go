@@ -30,7 +30,7 @@ type ValidatorsOpts struct {
 	Indices []capella.ValidatorIndex
 	// PubKeys is a list of validator public keys to restrict the returned values.
 	// If no public keys are supplied then no filter will be applied.
-	PubKeys []capella.BLSPubKey
+	PubKeys []capella.MLDSA87PubKey
 	// ValidatorStates is a list of validator states to restrict the returned values.
 	// If no validator states are supplied then no filter will be applied.
 	ValidatorStates []apiv1.ValidatorState

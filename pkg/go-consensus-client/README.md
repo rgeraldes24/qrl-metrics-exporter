@@ -1,6 +1,6 @@
 # go-consensus-client
 
-Go library providing an abstraction to multiple QRL beacon nodes.  Its external API follows the official [QRL beacon APIs](https://github.com/ethereum/beacon-APIs) specification.
+Go library providing an abstraction to multiple QRL consensus beacon nodes.  Its external API follows the official [QRL beacon APIs](https://github.com/ethereum/beacon-APIs) specification.
 
 This library is under development; expect APIs and data structures to change until it reaches version 1.0.  In addition, clients' implementations of both their own and the standard API are themselves under development so implementation of the full API can be incomplete.
 
@@ -106,7 +106,7 @@ Chris Berry: [@bez625](https://github.com/Bez625).
 
 ## Contribute
 
-Contributions welcome. Please check out [the issues](https://github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/issues).
+Contributions welcome. Please check out [the issues](https://github.com/theQRL/qrl-metrics-exporter/issues).
 
 ## License
 

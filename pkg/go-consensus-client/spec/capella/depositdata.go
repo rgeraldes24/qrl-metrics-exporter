@@ -27,10 +27,10 @@ import (
 
 // DepositData provides information about a deposit made on QRL.
 type DepositData struct {
-	PublicKey             BLSPubKey `ssz-size:"48"`
-	WithdrawalCredentials []byte    `ssz-size:"32"`
+	PublicKey             MLDSA87PubKey `ssz-size:"2592"`
+	WithdrawalCredentials []byte        `ssz-size:"32"`
 	Amount                Gwei
-	Signature             BLSSignature `ssz-size:"96"`
+	Signature             MLDSA87Signature `ssz-size:"4627"`
 }
 
 // depositDataJSON is the spec representation of the struct.

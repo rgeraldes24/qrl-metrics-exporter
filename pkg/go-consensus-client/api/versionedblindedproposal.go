@@ -59,17 +59,17 @@ func (v *VersionedBlindedProposal) ProposerIndex() (capella.ValidatorIndex, erro
 }
 
 // RandaoReveal returns the RANDAO reveal of the blinded proposal.
-func (v *VersionedBlindedProposal) RandaoReveal() (capella.BLSSignature, error) {
+func (v *VersionedBlindedProposal) RandaoReveal() (capella.MLDSA87Signature, error) {
 	switch v.Version {
 	case spec.DataVersionCapella:
 		if v.Capella == nil ||
 			v.Capella.Body == nil {
-			return capella.BLSSignature{}, ErrDataMissing
+			return capella.MLDSA87Signature{}, ErrDataMissing
 		}
 
 		return v.Capella.Body.RANDAOReveal, nil
 	default:
-		return capella.BLSSignature{}, ErrUnsupportedVersion
+		return capella.MLDSA87Signature{}, ErrUnsupportedVersion
 	}
 }
 

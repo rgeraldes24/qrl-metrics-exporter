@@ -51,7 +51,7 @@ func TestSyncCommitteeRewards(t *testing.T) {
 				Indices: []capella.ValidatorIndex{
 					286437,
 				},
-				PubKeys: []capella.BLSPubKey{
+				PubKeys: []capella.MLDSA87PubKey{
 					*mustParsePubKey("0xb7dd1c63cfe60163ffcb889d502b0af3b8ab41cb0dc95edb46eccfeb79e984886fe54f800e813ae09d48e98087010a10"),
 				},
 			},
@@ -76,7 +76,7 @@ func TestSyncCommitteeRewards(t *testing.T) {
 				Indices: []capella.ValidatorIndex{
 					290742,
 				},
-				PubKeys: []capella.BLSPubKey{
+				PubKeys: []capella.MLDSA87PubKey{
 					*mustParsePubKey("0x89c3d75c9fa8daa39cf721fd3caf441de9b43dd59ae1275dd482fa48dbd8463737038b3b8cb2f53c1a8635c8733fb7ca"),
 				},
 			},

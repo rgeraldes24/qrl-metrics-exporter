@@ -27,7 +27,7 @@ import (
 // SignedAggregateAndProof provides information about a signed aggregate and proof.
 type SignedAggregateAndProof struct {
 	Message   *AggregateAndProof
-	Signature BLSSignature `ssz-size:"96"`
+	Signature MLDSA87Signature `ssz-size:"4627"`
 }
 
 // signedAggregateAndProofJSON is a raw representation of the struct.

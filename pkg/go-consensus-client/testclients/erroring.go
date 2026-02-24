@@ -27,13 +27,13 @@ import (
 	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
 )
 
-// Erroring is a QRL client that errors at a given rate.
+// Erroring is a QRL consensus client that errors at a given rate.
 type Erroring struct {
 	errorRate float64
 	next      consensusclient.Service
 }
 
-// NewErroring creates a new QRL client that errors at a given rate.
+// NewErroring creates a new QRL consensus client that errors at a given rate.
 func NewErroring(_ context.Context,
 	errorRate float64,
 	next consensusclient.Service,

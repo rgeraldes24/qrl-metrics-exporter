@@ -27,8 +27,8 @@ import (
 
 // DepositMessage provides information about a deposit made on QRL.
 type DepositMessage struct {
-	PublicKey             BLSPubKey `ssz-size:"48"`
-	WithdrawalCredentials []byte    `ssz-size:"32"`
+	PublicKey             MLDSA87PubKey `ssz-size:"2592"`
+	WithdrawalCredentials []byte        `ssz-size:"32"`
 	Amount                Gwei
 }
 

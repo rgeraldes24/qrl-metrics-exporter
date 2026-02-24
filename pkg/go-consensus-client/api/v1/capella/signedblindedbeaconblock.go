@@ -23,7 +23,7 @@ import (
 // SignedBlindedBeaconBlock is a signed beacon block.
 type SignedBlindedBeaconBlock struct {
 	Message   *BlindedBeaconBlock
-	Signature capella.BLSSignature `ssz-size:"96"`
+	Signature capella.MLDSA87Signature `ssz-size:"4627"`
 }
 
 // String returns a string version of the structure.

@@ -232,15 +232,15 @@ func (v *VersionedSignedBlindedBeaconBlock) ExecutionBlockNumber() (uint64, erro
 }
 
 // Signature returns the signature of the beacon block.
-func (v *VersionedSignedBlindedBeaconBlock) Signature() (capella.BLSSignature, error) {
+func (v *VersionedSignedBlindedBeaconBlock) Signature() (capella.MLDSA87Signature, error) {
 	switch v.Version {
 	case spec.DataVersionCapella:
 		if v.Capella == nil {
-			return capella.BLSSignature{}, ErrDataMissing
+			return capella.MLDSA87Signature{}, ErrDataMissing
 		}
 
 		return v.Capella.Signature, nil
 	default:
-		return capella.BLSSignature{}, ErrUnsupportedVersion
+		return capella.MLDSA87Signature{}, ErrUnsupportedVersion
 	}
 }

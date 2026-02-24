@@ -27,7 +27,7 @@ import (
 // SignedVoluntaryExit provides information about a signed voluntary exit.
 type SignedVoluntaryExit struct {
 	Message   *VoluntaryExit
-	Signature BLSSignature `ssz-size:"96"`
+	Signature MLDSA87Signature `ssz-size:"4627"`
 }
 
 // signedVoluntaryExitJSON is the spec representation of the struct.

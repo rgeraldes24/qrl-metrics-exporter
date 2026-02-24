@@ -54,13 +54,6 @@ func (s *Service) BlindedProposal(ctx context.Context,
 	query := fmt.Sprintf("randao_reveal=%#x&graffiti=%#x", opts.RandaoReveal, opts.Graffiti)
 
 	if opts.SkipRandaoVerification {
-		if !opts.RandaoReveal.IsInfinity() {
-			return nil, errors.Join(
-				errors.New("randao reveal must be point at infinity if skip randao verification is set"),
-				client.ErrInvalidOptions,
-			)
-		}
-
 		query = fmt.Sprintf("%s&skip_randao_verification", query)
 	}
 

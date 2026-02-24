@@ -162,7 +162,7 @@ func mustParseRoot(input string) *capella.Root {
 }
 
 // mustParseSignature is used for testing.
-func mustParseSignature(input string) *capella.BLSSignature {
+func mustParseSignature(input string) *capella.MLDSA87Signature {
 	sig, err := hex.DecodeString(strings.TrimPrefix(input, "0x"))
 	if err != nil {
 		panic("invalid signature")
@@ -171,14 +171,14 @@ func mustParseSignature(input string) *capella.BLSSignature {
 		panic("invalid length signature")
 	}
 
-	var res capella.BLSSignature
+	var res capella.MLDSA87Signature
 	copy(res[:], sig)
 
 	return &res
 }
 
 // mustParsePubKey is used for testing.
-func mustParsePubKey(input string) *capella.BLSPubKey {
+func mustParsePubKey(input string) *capella.MLDSA87PubKey {
 	pubKey, err := hex.DecodeString(strings.TrimPrefix(input, "0x"))
 	if err != nil {
 		panic("invalid public key")
@@ -187,7 +187,7 @@ func mustParsePubKey(input string) *capella.BLSPubKey {
 		panic("invalid length public key")
 	}
 
-	var res capella.BLSPubKey
+	var res capella.MLDSA87PubKey
 	copy(res[:], pubKey)
 
 	return &res

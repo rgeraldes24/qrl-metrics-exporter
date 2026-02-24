@@ -16,6 +16,8 @@ package capella_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -25,6 +27,10 @@ import (
 )
 
 func TestSyncAggregateJSON(t *testing.T) {
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+	shortSignature := "0x" + strings.Repeat("61", capella.SignatureLength-1)
+	longSignature := "0x" + strings.Repeat("61", capella.SignatureLength+1)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -41,37 +47,47 @@ func TestSyncAggregateJSON(t *testing.T) {
 		},
 		{
 			name:  "SyncCommitteeBitsMissing",
-			input: []byte(`{"sync_committee_signature":"0xe63b8ab602266593dbfe7f714891c5fed225e09c214bda8281c86ceddb6ee10727a854f213d33be1f032399e0044db6fa30368b6dc857fa8f12f61fc3bf4113a6e9cefeb11758fb01a9939950e127d71dc9c54a26aec63ef024b6620e6d32e44"}`),
+			input: []byte(fmt.Sprintf(`{"sync_committee_signatures":["%s"]}`, validSignature)),
 			err:   "sync committee bits missing",
 		},
 		{
 			name:  "SyncCommitteeBitsInvalid",
-			input: []byte(`{"sync_committee_bits":"invalid","sync_committee_signature":"0xe63b8ab602266593dbfe7f714891c5fed225e09c214bda8281c86ceddb6ee10727a854f213d33be1f032399e0044db6fa30368b6dc857fa8f12f61fc3bf4113a6e9cefeb11758fb01a9939950e127d71dc9c54a26aec63ef024b6620e6d32e44"}`),
+			input: []byte(fmt.Sprintf(`{"sync_committee_bits":"invalid","sync_committee_signatures":["%s"]}`, validSignature)),
 			err:   "invalid value for sync committee bits: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "SyncCommitteeSignatureMissing",
-			input: []byte(`{"sync_committee_bits":"0xe7fcbc21f184b9b89bfc57cc07232a4fce8e12efee3a8c4967932491267a215cd0aff3e79f19645d6f832592f93d91271071a4e911d3f64447e1f6f68247fdec"}`),
-			err:   "sync committee signature missing",
+			input: []byte(`{"sync_committee_bits":"0xe7fc"}`),
+			err:   "sync committee signatures missing",
+		},
+		{
+			name:  "SyncCommitteeSignaturesWrongType",
+			input: []byte(`{"sync_committee_bits":"0xe7fc","sync_committee_signatures":true}`),
+			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field syncAggregateJSON.sync_committee_signatures of type []string",
 		},
 		{
 			name:  "SyncCommitteeSignatureInvalid",
-			input: []byte(`{"sync_committee_bits":"0xe7fcbc21f184b9b89bfc57cc07232a4fce8e12efee3a8c4967932491267a215cd0aff3e79f19645d6f832592f93d91271071a4e911d3f64447e1f6f68247fdec","sync_committee_signature":"invalid"}`),
+			input: []byte(`{"sync_committee_bits":"0xe7fc","sync_committee_signatures":["invalid"]}`),
 			err:   "invalid value for sync committee signature: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "SignatureShort",
-			input: []byte(`{"sync_committee_bits":"0xe7fcbc21f184b9b89bfc57cc07232a4fce8e12efee3a8c4967932491267a215cd0aff3e79f19645d6f832592f93d91271071a4e911d3f64447e1f6f68247fdec","sync_committee_signature":"0x3b8ab602266593dbfe7f714891c5fed225e09c214bda8281c86ceddb6ee10727a854f213d33be1f032399e0044db6fa30368b6dc857fa8f12f61fc3bf4113a6e9cefeb11758fb01a9939950e127d71dc9c54a26aec63ef024b6620e6d32e44"}`),
-			err:   "sync committee signature short",
+			input: []byte(fmt.Sprintf(`{"sync_committee_bits":"0xe7fc","sync_committee_signatures":["%s"]}`, shortSignature)),
+			err:   "incorrect length for sync committee signature",
 		},
 		{
 			name:  "SignatureLong",
-			input: []byte(`{"sync_committee_bits":"0xe7fcbc21f184b9b89bfc57cc07232a4fce8e12efee3a8c4967932491267a215cd0aff3e79f19645d6f832592f93d91271071a4e911d3f64447e1f6f68247fdec","sync_committee_signature":"0xe6e63b8ab602266593dbfe7f714891c5fed225e09c214bda8281c86ceddb6ee10727a854f213d33be1f032399e0044db6fa30368b6dc857fa8f12f61fc3bf4113a6e9cefeb11758fb01a9939950e127d71dc9c54a26aec63ef024b6620e6d32e44"}`),
-			err:   "sync committee signature long",
+			input: []byte(fmt.Sprintf(`{"sync_committee_bits":"0xe7fc","sync_committee_signatures":["%s"]}`, longSignature)),
+			err:   "incorrect length for sync committee signature",
+		},
+		{
+			name:  "SyncCommitteeBitsWrongLength",
+			input: []byte(fmt.Sprintf(`{"sync_committee_bits":"0xe7fcbc","sync_committee_signatures":["%s"]}`, validSignature)),
+			err:   "incorrect length for sync committee bits",
 		},
 		{
 			name:  "Good",
-			input: []byte(`{"sync_committee_bits":"0xe7fcbc21f184b9b89bfc57cc07232a4fce8e12efee3a8c4967932491267a215cd0aff3e79f19645d6f832592f93d91271071a4e911d3f64447e1f6f68247fdec","sync_committee_signature":"0xe63b8ab602266593dbfe7f714891c5fed225e09c214bda8281c86ceddb6ee10727a854f213d33be1f032399e0044db6fa30368b6dc857fa8f12f61fc3bf4113a6e9cefeb11758fb01a9939950e127d71dc9c54a26aec63ef024b6620e6d32e44"}`),
+			input: []byte(fmt.Sprintf(`{"sync_committee_bits":"0xe7fc","sync_committee_signatures":["%s"]}`, validSignature)),
 		},
 	}
 
@@ -92,6 +108,8 @@ func TestSyncAggregateJSON(t *testing.T) {
 }
 
 func TestSyncAggregateYAML(t *testing.T) {
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -100,7 +118,7 @@ func TestSyncAggregateYAML(t *testing.T) {
 	}{
 		{
 			name:  "Good",
-			input: []byte(`{sync_committee_bits: '0xe7fcbc21f184b9b89bfc57cc07232a4fce8e12efee3a8c4967932491267a215cd0aff3e79f19645d6f832592f93d91271071a4e911d3f64447e1f6f68247fdec', sync_committee_signature: '0xe63b8ab602266593dbfe7f714891c5fed225e09c214bda8281c86ceddb6ee10727a854f213d33be1f032399e0044db6fa30368b6dc857fa8f12f61fc3bf4113a6e9cefeb11758fb01a9939950e127d71dc9c54a26aec63ef024b6620e6d32e44'}`),
+			input: []byte(fmt.Sprintf(`{sync_committee_bits: '0xe7fc', sync_committee_signatures: ['%s']}`, validSignature)),
 		},
 	}
 

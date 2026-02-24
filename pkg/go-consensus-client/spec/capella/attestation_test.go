@@ -16,6 +16,8 @@ package capella_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -24,7 +26,16 @@ import (
 	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
 )
 
+const (
+	attestationDataJSON = `{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}}`
+	attestationDataYAML = `{slot: 100, index: 1, beacon_block_root: '0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f', source: {epoch: 1, root: '0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f'}, target: {epoch: 2, root: '0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f'}}`
+)
+
 func TestAttestationJSON(t *testing.T) {
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+	shortSignature := "0x" + strings.Repeat("61", capella.SignatureLength-1)
+	longSignature := "0x" + strings.Repeat("61", capella.SignatureLength+1)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -41,57 +52,57 @@ func TestAttestationJSON(t *testing.T) {
 		},
 		{
 			name:  "AggregationBitsMissing",
-			input: []byte(`{"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"data":%s,"signatures":["%s"]}`, attestationDataJSON, validSignature)),
 			err:   "aggregation bits missing",
 		},
 		{
 			name:  "AggregationBitsWrongType",
-			input: []byte(`{"aggregation_bits":true,"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":true,"data":%s,"signatures":["%s"]}`, attestationDataJSON, validSignature)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field attestationJSON.aggregation_bits of type string",
 		},
 		{
 			name:  "AggregationBitsInvalid",
-			input: []byte(`{"aggregation_bits":"invalid","data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"invalid","data":%s,"signatures":["%s"]}`, attestationDataJSON, validSignature)),
 			err:   "invalid value for beacon block root: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "DataMissing",
-			input: []byte(`{"aggregation_bits":"0x010203","signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"0x010203","signatures":["%s"]}`, validSignature)),
 			err:   "data missing",
 		},
 		{
 			name:  "DataInvalid",
-			input: []byte(`{"aggregation_bits":"0x010203","data":true,"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"0x010203","data":true,"signatures":["%s"]}`, validSignature)),
 			err:   "invalid JSON: invalid JSON: json: cannot unmarshal bool into Go value of type capella.attestationDataJSON",
 		},
 		{
 			name:  "SignatureMissing",
-			input: []byte(`{"aggregation_bits":"0x010203","data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}}}`),
-			err:   "signature missing",
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"0x010203","data":%s}`, attestationDataJSON)),
+			err:   "signatures missing",
 		},
 		{
 			name:  "SignatureWrongType",
-			input: []byte(`{"aggregation_bits":"0x010203","data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":true}`),
-			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field attestationJSON.signature of type string",
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"0x010203","data":%s,"signatures":true}`, attestationDataJSON)),
+			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field attestationJSON.signatures of type []string",
 		},
 		{
 			name:  "SignatureInvalid",
-			input: []byte(`{"aggregation_bits":"0x010203","data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"invalid"}`),
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"0x010203","data":%s,"signatures":["invalid"]}`, attestationDataJSON)),
 			err:   "invalid value for signature: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "SignatureShort",
-			input: []byte(`{"aggregation_bits":"0x010203","data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x6162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"0x010203","data":%s,"signatures":["%s"]}`, attestationDataJSON, shortSignature)),
 			err:   "incorrect length for signature",
 		},
 		{
 			name:  "SignatureLong",
-			input: []byte(`{"aggregation_bits":"0x010203","data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x60606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"0x010203","data":%s,"signatures":["%s"]}`, attestationDataJSON, longSignature)),
 			err:   "incorrect length for signature",
 		},
 		{
 			name:  "Good",
-			input: []byte(`{"aggregation_bits":"0x010203","data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"aggregation_bits":"0x010203","data":%s,"signatures":["%s"]}`, attestationDataJSON, validSignature)),
 		},
 	}
 
@@ -112,6 +123,8 @@ func TestAttestationJSON(t *testing.T) {
 }
 
 func TestAttestationYAML(t *testing.T) {
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -120,7 +133,7 @@ func TestAttestationYAML(t *testing.T) {
 	}{
 		{
 			name:  "Good",
-			input: []byte(`{aggregation_bits: '0x010203', data: {slot: 100, index: 1, beacon_block_root: '0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f', source: {epoch: 1, root: '0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f'}, target: {epoch: 2, root: '0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f'}}, signature: '0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf'}`),
+			input: []byte(fmt.Sprintf(`{aggregation_bits: '0x010203', data: %s, signatures: ['%s']}`, attestationDataYAML, validSignature)),
 		},
 	}
 

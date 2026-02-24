@@ -215,15 +215,15 @@ func (v *VersionedSignedBlindedProposal) ExecutionBlockNumber() (uint64, error) 
 }
 
 // Signature returns the signature of the blinded proposal.
-func (v *VersionedSignedBlindedProposal) Signature() (capella.BLSSignature, error) {
+func (v *VersionedSignedBlindedProposal) Signature() (capella.MLDSA87Signature, error) {
 	switch v.Version {
 	case spec.DataVersionCapella:
 		if v.Capella == nil {
-			return capella.BLSSignature{}, ErrDataMissing
+			return capella.MLDSA87Signature{}, ErrDataMissing
 		}
 
 		return v.Capella.Signature, nil
 	default:
-		return capella.BLSSignature{}, ErrUnsupportedVersion
+		return capella.MLDSA87Signature{}, ErrUnsupportedVersion
 	}
 }

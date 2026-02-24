@@ -28,7 +28,7 @@ import (
 // SignedValidatorRegistration is a signed ValidatorRegistrationV1.
 type SignedValidatorRegistration struct {
 	Message   *ValidatorRegistration
-	Signature capella.BLSSignature `ssz-size:"96"`
+	Signature capella.MLDSA87Signature `ssz-size:"4627"`
 }
 
 // signedValidatorRegistrationJSON is the spec representation of the struct.

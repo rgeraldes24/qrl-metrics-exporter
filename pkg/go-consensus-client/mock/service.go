@@ -68,6 +68,7 @@ type Service struct {
 	NodePeersFunc                 func(context.Context, *api.NodePeersOpts) (*api.Response[[]*apiv1.Peer], error)
 	NodeSyncingFunc               func(context.Context, *api.NodeSyncingOpts) (*api.Response[*apiv1.SyncState], error)
 	NodeVersionFunc               func(context.Context, *api.NodeVersionOpts) (*api.Response[string], error)
+	BlindedProposalFunc           func(context.Context, *api.BlindedProposalOpts) (*api.Response[*api.VersionedBlindedProposal], error)
 	ProposalFunc                  func(context.Context, *api.ProposalOpts) (*api.Response[*api.VersionedProposal], error)
 	ProposerDutiesFunc            func(context.Context, *api.ProposerDutiesOpts) (*api.Response[[]*apiv1.ProposerDuty], error)
 	SignedBeaconBlockFunc         func(context.Context, *api.SignedBeaconBlockOpts) (*api.Response[*spec.VersionedSignedBeaconBlock], error)

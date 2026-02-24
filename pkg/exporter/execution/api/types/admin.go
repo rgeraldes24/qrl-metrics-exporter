@@ -8,7 +8,7 @@ import (
 
 // NodeInfo is the information about the node.
 type NodeInfo struct {
-	Enode      string `json:"enode"`
+	Qnode      string `json:"qnode"`
 	ID         string `json:"id"`
 	IP         string `json:"ip"`
 	ListenAddr string `json:"listenAddr"`

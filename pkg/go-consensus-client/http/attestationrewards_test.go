@@ -49,7 +49,7 @@ func TestAttestationRewards(t *testing.T) {
 				Indices: []capella.ValidatorIndex{
 					0, 1,
 				},
-				PubKeys: []capella.BLSPubKey{
+				PubKeys: []capella.MLDSA87PubKey{
 					*mustParsePubKey("0xb2ff4716ed345b05dd1dfc6a5a9fa70856d8c75dcc9e881dd2f766d5f891326f0d10e96f3a444ce6c912b69c22c6754d"),
 					*mustParsePubKey("0x8e323fd501233cd4d1b9d63d74076a38de50f2f584b001a5ac2412e4e46adb26d2fb2a6041e7e8c57cd4df0916729219"),
 				},
@@ -75,7 +75,7 @@ func TestAttestationRewards(t *testing.T) {
 				Indices: []capella.ValidatorIndex{
 					0, 1,
 				},
-				PubKeys: []capella.BLSPubKey{
+				PubKeys: []capella.MLDSA87PubKey{
 					*mustParsePubKey("0x92f191eae66684750f59d9abe68118135b9fcbe44b65eedb1291fcd59a46c35371a0af2d582feadd477d2a3cf65bb5eb"),
 					*mustParsePubKey("0x88fac3af9041719a2f0ce45acf7e9a8ba36ef5bfe4be7989a21be21d8e97113583e936a3ae5357d19151a37c81a0fafe"),
 				},

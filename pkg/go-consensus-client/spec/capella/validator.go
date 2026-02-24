@@ -27,8 +27,8 @@ import (
 
 // Validator is the QRL consensus validator structure.
 type Validator struct {
-	PublicKey                  BLSPubKey `ssz-size:"48"`
-	WithdrawalCredentials      []byte    `ssz-size:"32"`
+	PublicKey                  MLDSA87PubKey `ssz-size:"2592"`
+	WithdrawalCredentials      []byte        `ssz-size:"32"`
 	EffectiveBalance           Gwei
 	Slashed                    bool
 	ActivationEligibilityEpoch Epoch

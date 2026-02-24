@@ -30,7 +30,7 @@ type SyncCommitteeMessage struct {
 	Slot            Slot
 	BeaconBlockRoot Root `ssz-size:"32"`
 	ValidatorIndex  ValidatorIndex
-	Signature       BLSSignature `ssz-size:"96"`
+	Signature       MLDSA87Signature `ssz-size:"4627"`
 }
 
 // syncCommitteeMessageJSON is the spec representation of the struct.

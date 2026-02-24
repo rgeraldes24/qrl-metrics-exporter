@@ -20,38 +20,43 @@ import (
 	"fmt"
 	"strings"
 
-	bitfield "github.com/OffchainLabs/go-bitfield"
 	"github.com/goccy/go-yaml"
 	"github.com/pkg/errors"
+	bitfield "github.com/theQRL/go-bitfield"
 )
 
 // Attestation is the QRL attestation structure.
 type Attestation struct {
-	AggregationBits bitfield.Bitlist `dynssz-max:"MAX_VALIDATORS_PER_COMMITTEE" ssz-max:"2048"`
+	AggregationBits bitfield.Bitlist `dynssz-max:"MAX_VALIDATORS_PER_COMMITTEE" ssz-max:"128"`
 	Data            *AttestationData
-	Signature       BLSSignature `ssz-size:"96"`
+	Signatures      []MLDSA87Signature `ssz-max:"128" ssz-size:"?,4627"`
 }
 
 // attestationJSON is a raw representation of the struct.
 type attestationJSON struct {
 	AggregationBits string           `json:"aggregation_bits"`
 	Data            *AttestationData `json:"data"`
-	Signature       string           `json:"signature"`
+	Signatures      []string         `json:"signatures"`
 }
 
 // attestationYAML is a raw representation of the struct.
 type attestationYAML struct {
 	AggregationBits string           `yaml:"aggregation_bits"`
 	Data            *AttestationData `yaml:"data"`
-	Signature       string           `yaml:"signature"`
+	Signatures      []string         `yaml:"signatures"`
 }
 
 // MarshalJSON implements json.Marshaler.
 func (a *Attestation) MarshalJSON() ([]byte, error) {
+	signatures := make([]string, len(a.Signatures))
+	for i := range a.Signatures {
+		signatures[i] = fmt.Sprintf("%#x", a.Signatures[i])
+	}
+
 	return json.Marshal(&attestationJSON{
 		AggregationBits: fmt.Sprintf("%#x", []byte(a.AggregationBits)),
 		Data:            a.Data,
-		Signature:       fmt.Sprintf("%#x", a.Signature),
+		Signatures:      signatures,
 	})
 }
 
@@ -69,10 +74,15 @@ func (a *Attestation) UnmarshalJSON(input []byte) error {
 
 // MarshalYAML implements yaml.Marshaler.
 func (a *Attestation) MarshalYAML() ([]byte, error) {
+	signatures := make([]string, len(a.Signatures))
+	for i := range a.Signatures {
+		signatures[i] = fmt.Sprintf("%#x", a.Signatures[i])
+	}
+
 	yamlBytes, err := yaml.MarshalWithOptions(&attestationYAML{
 		AggregationBits: fmt.Sprintf("%#x", []byte(a.AggregationBits)),
 		Data:            a.Data,
-		Signature:       fmt.Sprintf("%#x", a.Signature),
+		Signatures:      signatures,
 	}, yaml.Flow(true))
 	if err != nil {
 		return nil, err
@@ -118,20 +128,23 @@ func (a *Attestation) unpack(attestationJSON *attestationJSON) error {
 		return errors.New("data missing")
 	}
 
-	if attestationJSON.Signature == "" {
-		return errors.New("signature missing")
+	if len(attestationJSON.Signatures) == 0 {
+		return errors.New("signatures missing")
 	}
 
-	signature, err := hex.DecodeString(strings.TrimPrefix(attestationJSON.Signature, "0x"))
-	if err != nil {
-		return errors.Wrap(err, "invalid value for signature")
-	}
+	a.Signatures = make([]MLDSA87Signature, len(attestationJSON.Signatures))
+	for i := range attestationJSON.Signatures {
+		signature, err := hex.DecodeString(strings.TrimPrefix(attestationJSON.Signatures[i], "0x"))
+		if err != nil {
+			return errors.Wrap(err, "invalid value for signature")
+		}
 
-	if len(signature) != SignatureLength {
-		return errors.New("incorrect length for signature")
-	}
+		if len(signature) != SignatureLength {
+			return errors.New("incorrect length for signature")
+		}
 
-	copy(a.Signature[:], signature)
+		copy(a.Signatures[i][:], signature)
+	}
 
 	return nil
 }

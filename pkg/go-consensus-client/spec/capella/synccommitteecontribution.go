@@ -21,9 +21,9 @@ import (
 	"strconv"
 	"strings"
 
-	bitfield "github.com/OffchainLabs/go-bitfield"
 	"github.com/goccy/go-yaml"
 	"github.com/pkg/errors"
+	bitfield "github.com/theQRL/go-bitfield"
 )
 
 // SyncCommitteeContribution is the QRL sync committee contribution structure.
@@ -32,36 +32,41 @@ type SyncCommitteeContribution struct {
 	BeaconBlockRoot   Root `ssz-size:"32"`
 	SubcommitteeIndex uint64
 	// AggregationBits size is SYNC_COMMITTEE_SIZE // SYNC_COMMITTEE_SUBNET_COUNT
-	AggregationBits bitfield.Bitvector128 `dynssz-size:"SYNC_COMMITTEE_SIZE/SYNC_COMMITTEE_SUBNET_COUNT" ssz-size:"16"`
-	Signature       BLSSignature          `ssz-size:"96"`
+	AggregationBits bitfield.Bitvector16 `dynssz-size:"SYNC_COMMITTEE_SIZE/SYNC_COMMITTEE_SUBNET_COUNT" ssz-size:"2"`
+	Signatures      []MLDSA87Signature   `ssz-max:"16" ssz-size:"?,4627"`
 }
 
 // syncCommitteeContributionJSON is the spec representation of the struct.
 type syncCommitteeContributionJSON struct {
-	Slot              string `json:"slot"`
-	BeaconBlockRoot   string `json:"beacon_block_root"`
-	SubcommitteeIndex string `json:"subcommittee_index"`
-	AggregationBits   string `json:"aggregation_bits"`
-	Signature         string `json:"signature"`
+	Slot              string   `json:"slot"`
+	BeaconBlockRoot   string   `json:"beacon_block_root"`
+	SubcommitteeIndex string   `json:"subcommittee_index"`
+	AggregationBits   string   `json:"aggregation_bits"`
+	Signatures        []string `json:"signatures"`
 }
 
 // syncCommitteeContributionYAML is the spec representation of the struct.
 type syncCommitteeContributionYAML struct {
-	Slot              uint64 `yaml:"slot"`
-	BeaconBlockRoot   string `yaml:"beacon_block_root"`
-	SubcommitteeIndex uint64 `yaml:"subcommittee_index"`
-	AggregationBits   string `json:"aggregation_bits"`
-	Signature         string `yaml:"signature"`
+	Slot              uint64   `yaml:"slot"`
+	BeaconBlockRoot   string   `yaml:"beacon_block_root"`
+	SubcommitteeIndex uint64   `yaml:"subcommittee_index"`
+	AggregationBits   string   `yaml:"aggregation_bits"`
+	Signatures        []string `yaml:"signatures"`
 }
 
 // MarshalJSON implements json.Marshaler.
 func (s *SyncCommitteeContribution) MarshalJSON() ([]byte, error) {
+	signatures := make([]string, len(s.Signatures))
+	for i := range s.Signatures {
+		signatures[i] = fmt.Sprintf("%#x", s.Signatures[i])
+	}
+
 	return json.Marshal(&syncCommitteeContributionJSON{
 		Slot:              fmt.Sprintf("%d", s.Slot),
 		BeaconBlockRoot:   fmt.Sprintf("%#x", s.BeaconBlockRoot),
 		SubcommitteeIndex: strconv.FormatUint(s.SubcommitteeIndex, 10),
 		AggregationBits:   fmt.Sprintf("%#x", []byte(s.AggregationBits)),
-		Signature:         fmt.Sprintf("%#x", s.Signature),
+		Signatures:        signatures,
 	})
 }
 
@@ -122,33 +127,44 @@ func (s *SyncCommitteeContribution) unpack(syncCommitteeContributionJSON *syncCo
 	); err != nil {
 		return errors.Wrap(err, "invalid value for aggregation bits")
 	}
-
-	if syncCommitteeContributionJSON.Signature == "" {
-		return errors.New("signature missing")
+	if len(s.AggregationBits) != 2 {
+		return errors.New("incorrect length for aggregation bits")
 	}
 
-	signature, err := hex.DecodeString(strings.TrimPrefix(syncCommitteeContributionJSON.Signature, "0x"))
-	if err != nil {
-		return errors.Wrap(err, "invalid value for signature")
+	if len(syncCommitteeContributionJSON.Signatures) == 0 {
+		return errors.New("signatures missing")
 	}
 
-	if len(signature) != SignatureLength {
-		return errors.New("incorrect length for signature")
-	}
+	s.Signatures = make([]MLDSA87Signature, len(syncCommitteeContributionJSON.Signatures))
+	for i := range syncCommitteeContributionJSON.Signatures {
+		signature, err := hex.DecodeString(strings.TrimPrefix(syncCommitteeContributionJSON.Signatures[i], "0x"))
+		if err != nil {
+			return errors.Wrap(err, "invalid value for signature")
+		}
 
-	copy(s.Signature[:], signature)
+		if len(signature) != SignatureLength {
+			return errors.New("incorrect length for signature")
+		}
+
+		copy(s.Signatures[i][:], signature)
+	}
 
 	return nil
 }
 
 // MarshalYAML implements yaml.Marshaler.
 func (s *SyncCommitteeContribution) MarshalYAML() ([]byte, error) {
+	signatures := make([]string, len(s.Signatures))
+	for i := range s.Signatures {
+		signatures[i] = fmt.Sprintf("%#x", s.Signatures[i])
+	}
+
 	yamlBytes, err := yaml.MarshalWithOptions(&syncCommitteeContributionYAML{
 		Slot:              uint64(s.Slot),
 		BeaconBlockRoot:   fmt.Sprintf("%#x", s.BeaconBlockRoot),
 		SubcommitteeIndex: s.SubcommitteeIndex,
 		AggregationBits:   fmt.Sprintf("%#x", []byte(s.AggregationBits)),
-		Signature:         fmt.Sprintf("%#x", s.Signature),
+		Signatures:        signatures,
 	}, yaml.Flow(true))
 	if err != nil {
 		return nil, err

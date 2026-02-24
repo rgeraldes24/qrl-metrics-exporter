@@ -225,7 +225,7 @@ func (n *node) FetchBeaconStateRoot(ctx context.Context, state string) (capella.
 	return *rsp.Data, nil
 }
 
-func (n *node) FetchValidators(ctx context.Context, state string, indices []capella.ValidatorIndex, pubKeys []capella.BLSPubKey) (map[capella.ValidatorIndex]*v1.Validator, error) {
+func (n *node) FetchValidators(ctx context.Context, state string, indices []capella.ValidatorIndex, pubKeys []capella.MLDSA87PubKey) (map[capella.ValidatorIndex]*v1.Validator, error) {
 	provider, isProvider := n.client.(consensusclient.ValidatorsProvider)
 	if !isProvider {
 		return nil, errors.New("client does not implement consensusclient.ValidatorsProvider")

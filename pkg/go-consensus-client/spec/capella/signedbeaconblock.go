@@ -27,7 +27,7 @@ import (
 // SignedBeaconBlock is a signed beacon block.
 type SignedBeaconBlock struct {
 	Message   *BeaconBlock
-	Signature BLSSignature `ssz-size:"96"`
+	Signature MLDSA87Signature `ssz-size:"4627"`
 }
 
 // signedBeaconBlockJSON is the spec representation of the struct.

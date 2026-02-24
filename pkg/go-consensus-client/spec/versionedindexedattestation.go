@@ -59,16 +59,16 @@ func (v *VersionedIndexedAttestation) Data() (*capella.AttestationData, error) {
 }
 
 // Signature returns the signature of the indexed attestation.
-func (v *VersionedIndexedAttestation) Signature() (capella.BLSSignature, error) {
+func (v *VersionedIndexedAttestation) Signatures() ([]capella.MLDSA87Signature, error) {
 	switch v.Version {
 	case DataVersionCapella:
 		if v.Capella == nil {
-			return capella.BLSSignature{}, errors.New("no Capella indexed attestation")
+			return []capella.MLDSA87Signature{}, errors.New("no Capella indexed attestation")
 		}
 
-		return v.Capella.Signature, nil
+		return v.Capella.Signatures, nil
 	default:
-		return capella.BLSSignature{}, errors.New("unknown version")
+		return []capella.MLDSA87Signature{}, errors.New("unknown version")
 	}
 }
 

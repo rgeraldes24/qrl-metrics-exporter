@@ -77,7 +77,7 @@ func TestValidators(t *testing.T) {
 			name: "ManyValidatorPubkeys",
 			opts: &api.ValidatorsOpts{
 				State: "head",
-				PubKeys: []capella.BLSPubKey{
+				PubKeys: []capella.MLDSA87PubKey{
 					*mustParsePubKey("0x933ad9491b62059dd065b560d256d8957a8c402cc6e8d8ee7290ae11e8f7329267a8811c397529dac52ae1342ba58c95"),
 					*mustParsePubKey("0xa1d1ad0714035353258038e964ae9675dc0252ee22cea896825c01458e1807bfad2f9969338798548d9858a571f7425c"),
 					*mustParsePubKey("0xb2ff4716ed345b05dd1dfc6a5a9fa70856d8c75dcc9e881dd2f766d5f891326f0d10e96f3a444ce6c912b69c22c6754d"),
@@ -1111,7 +1111,7 @@ func TestValidators(t *testing.T) {
 			name: "ManyValidatorPubkeysHoodi",
 			opts: &api.ValidatorsOpts{
 				State: "finalized",
-				PubKeys: []capella.BLSPubKey{
+				PubKeys: []capella.MLDSA87PubKey{
 					*mustParsePubKey("0xa85e33ca0737c84dc947006226462a6eba8a96c41962248031980326ee1d119b5e64bb868c9c279ca9424799dda52698"),
 					*mustParsePubKey("0x939143908dd85e009588e04044b9b3049ed903cad85f1f900fae294a7cc980d35763dd98adb011654244765894445876"),
 					*mustParsePubKey("0x92f191eae66684750f59d9abe68118135b9fcbe44b65eedb1291fcd59a46c35371a0af2d582feadd477d2a3cf65bb5eb"),
@@ -2148,7 +2148,7 @@ func TestValidators(t *testing.T) {
 				Indices: []capella.ValidatorIndex{
 					0, 1,
 				},
-				PubKeys: []capella.BLSPubKey{
+				PubKeys: []capella.MLDSA87PubKey{
 					*mustParsePubKey("0xb2ff4716ed345b05dd1dfc6a5a9fa70856d8c75dcc9e881dd2f766d5f891326f0d10e96f3a444ce6c912b69c22c6754d"),
 					*mustParsePubKey("0x8e323fd501233cd4d1b9d63d74076a38de50f2f584b001a5ac2412e4e46adb26d2fb2a6041e7e8c57cd4df0916729219"),
 				},
@@ -2163,7 +2163,7 @@ func TestValidators(t *testing.T) {
 				Indices: []capella.ValidatorIndex{
 					55, 66,
 				},
-				PubKeys: []capella.BLSPubKey{
+				PubKeys: []capella.MLDSA87PubKey{
 					*mustParsePubKey("0xa85e33ca0737c84dc947006226462a6eba8a96c41962248031980326ee1d119b5e64bb868c9c279ca9424799dda52698"),
 					*mustParsePubKey("0x939143908dd85e009588e04044b9b3049ed903cad85f1f900fae294a7cc980d35763dd98adb011654244765894445876"),
 				},

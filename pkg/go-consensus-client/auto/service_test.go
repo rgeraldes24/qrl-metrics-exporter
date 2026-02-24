@@ -45,7 +45,7 @@ func TestService(t *testing.T) {
 		{
 			name:    "BadPort",
 			address: "localhost:22",
-			err:     "failed to connect to QRL client with any known method",
+			err:     "failed to connect to QRL consensus client with any known method",
 		},
 	}
 

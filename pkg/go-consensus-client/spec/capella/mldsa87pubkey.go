@@ -21,35 +21,23 @@ import (
 	"github.com/pkg/errors"
 )
 
-// BLSPubKey is a BLS12-381 public key.
-type BLSPubKey [48]byte
+// MLDSA87PubKey is a ML-DSA-87 public key.
+type MLDSA87PubKey [2592]byte
 
-var (
-	emptyBLSPubKey    = BLSPubKey{}
-	infinityBLSPubKey = BLSPubKey{
-		0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	}
-)
+var emptyMLDSA87PubKey = MLDSA87PubKey{}
 
 // IsZero returns true if the public key is zero.
-func (p BLSPubKey) IsZero() bool {
-	return bytes.Equal(p[:], emptyBLSPubKey[:])
-}
-
-// IsInfinity returns true if the public key is infinity.
-func (p BLSPubKey) IsInfinity() bool {
-	return bytes.Equal(p[:], infinityBLSPubKey[:])
+func (p MLDSA87PubKey) IsZero() bool {
+	return bytes.Equal(p[:], emptyMLDSA87PubKey[:])
 }
 
 // String returns a string version of the structure.
-func (p BLSPubKey) String() string {
+func (p MLDSA87PubKey) String() string {
 	return fmt.Sprintf("%#x", p)
 }
 
 // Format formats the public key.
-func (p BLSPubKey) Format(state fmt.State, v rune) {
+func (p MLDSA87PubKey) Format(state fmt.State, v rune) {
 	format := string(v)
 	switch v {
 	case 's':
@@ -66,7 +54,7 @@ func (p BLSPubKey) Format(state fmt.State, v rune) {
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
-func (p *BLSPubKey) UnmarshalJSON(input []byte) error {
+func (p *MLDSA87PubKey) UnmarshalJSON(input []byte) error {
 	if len(input) == 0 {
 		return errors.New("input missing")
 	}
@@ -96,12 +84,12 @@ func (p *BLSPubKey) UnmarshalJSON(input []byte) error {
 }
 
 // MarshalJSON implements json.Marshaler.
-func (p BLSPubKey) MarshalJSON() ([]byte, error) {
+func (p MLDSA87PubKey) MarshalJSON() ([]byte, error) {
 	return fmt.Appendf(nil, `"%#x"`, p), nil
 }
 
 // UnmarshalYAML implements yaml.Unmarshaler.
-func (p *BLSPubKey) UnmarshalYAML(input []byte) error {
+func (p *MLDSA87PubKey) UnmarshalYAML(input []byte) error {
 	if len(input) == 0 {
 		return errors.New("input missing")
 	}
@@ -131,6 +119,6 @@ func (p *BLSPubKey) UnmarshalYAML(input []byte) error {
 }
 
 // MarshalYAML implements yaml.Marshaler.
-func (p BLSPubKey) MarshalYAML() ([]byte, error) {
+func (p MLDSA87PubKey) MarshalYAML() ([]byte, error) {
 	return fmt.Appendf(nil, `'%#x'`, p), nil
 }

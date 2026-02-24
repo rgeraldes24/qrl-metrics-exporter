@@ -45,30 +45,30 @@ func (v *VersionedSignedAggregateAndProof) IsEmpty() bool {
 }
 
 // SelectionProof returns the selection proof of the signed aggregate.
-func (v *VersionedSignedAggregateAndProof) SelectionProof() (capella.BLSSignature, error) {
+func (v *VersionedSignedAggregateAndProof) SelectionProof() (capella.MLDSA87Signature, error) {
 	switch v.Version {
 	case DataVersionCapella:
 		if v.Capella == nil {
-			return capella.BLSSignature{}, errors.New("no capella signed aggregate and proof")
+			return capella.MLDSA87Signature{}, errors.New("no capella signed aggregate and proof")
 		}
 
 		return v.Capella.Message.SelectionProof, nil
 	default:
-		return capella.BLSSignature{}, errors.New("unknown version")
+		return capella.MLDSA87Signature{}, errors.New("unknown version")
 	}
 }
 
 // Signature returns the signature of the signed aggregate and proof.
-func (v *VersionedSignedAggregateAndProof) Signature() (capella.BLSSignature, error) {
+func (v *VersionedSignedAggregateAndProof) Signature() (capella.MLDSA87Signature, error) {
 	switch v.Version {
 	case DataVersionCapella:
 		if v.Capella == nil {
-			return capella.BLSSignature{}, errors.New("no capella signed aggregate and proof")
+			return capella.MLDSA87Signature{}, errors.New("no capella signed aggregate and proof")
 		}
 
 		return v.Capella.Signature, nil
 	default:
-		return capella.BLSSignature{}, errors.New("unknown version")
+		return capella.MLDSA87Signature{}, errors.New("unknown version")
 	}
 }
 

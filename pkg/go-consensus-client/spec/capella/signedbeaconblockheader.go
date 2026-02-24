@@ -27,7 +27,7 @@ import (
 // SignedBeaconBlockHeader provides information about a signed beacon block header.
 type SignedBeaconBlockHeader struct {
 	Message   *BeaconBlockHeader
-	Signature BLSSignature `ssz-size:"96"`
+	Signature MLDSA87Signature `ssz-size:"4627"`
 }
 
 // signedBeaconBlockHeaderJSON is an internal representation of the struct.

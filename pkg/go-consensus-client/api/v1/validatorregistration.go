@@ -32,7 +32,7 @@ type ValidatorRegistration struct {
 	FeeRecipient capella.ExecutionAddress `ssz-size:"20"`
 	GasLimit     uint64
 	Timestamp    time.Time
-	Pubkey       capella.BLSPubKey `ssz-size:"48"`
+	Pubkey       capella.MLDSA87PubKey `ssz-size:"2592"`
 }
 
 // validatorRegistrationJSON is the spec representation of the struct.

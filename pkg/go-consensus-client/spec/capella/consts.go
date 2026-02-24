@@ -25,7 +25,7 @@ const HashLength = 32
 const RootLength = 32
 
 // PublicKeyLength is the number of bytes in a public key.
-const PublicKeyLength = 48
+const PublicKeyLength = 2592
 
 // GraffitiLength is the number of bytes in a block graffiti.
 const GraffitiLength = 32

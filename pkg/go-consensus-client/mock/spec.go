@@ -28,8 +28,8 @@ func (s *Service) Spec(ctx context.Context, opts *api.SpecOpts) (*api.Response[m
 	}
 
 	data := map[string]any{
-		"SECONDS_PER_SLOT": 12 * time.Second,
-		"SLOTS_PER_EPOCH":  uint64(32),
+		"SECONDS_PER_SLOT": 60 * time.Second,
+		"SLOTS_PER_EPOCH":  uint64(128),
 	}
 
 	return &api.Response[map[string]any]{

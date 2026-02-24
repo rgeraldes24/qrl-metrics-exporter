@@ -22,7 +22,7 @@ import (
 
 // BlindedBeaconBlockBody represents the body of a blinded beacon block.
 type BlindedBeaconBlockBody struct {
-	RANDAOReveal           capella.BLSSignature `ssz-size:"96"`
+	RANDAOReveal           capella.MLDSA87Signature `ssz-size:"4627"`
 	ExecutionData          *capella.ExecutionData
 	Graffiti               [32]byte                       `ssz-size:"32"`
 	ProposerSlashings      []*capella.ProposerSlashing    `ssz-max:"16"`

@@ -27,7 +27,7 @@ import (
 // SignedContributionAndProof provides information about a signed contribution and proof.
 type SignedContributionAndProof struct {
 	Message   *ContributionAndProof
-	Signature BLSSignature `ssz-size:"96"`
+	Signature MLDSA87Signature `ssz-size:"4627"`
 }
 
 // signedContributionAndProofJSON is a raw representation of the struct.

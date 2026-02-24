@@ -70,16 +70,16 @@ func (v *VersionedSignedValidatorRegistration) Timestamp() (time.Time, error) {
 }
 
 // PubKey returns the public key of the signed validator registration.
-func (v *VersionedSignedValidatorRegistration) PubKey() (capella.BLSPubKey, error) {
+func (v *VersionedSignedValidatorRegistration) PubKey() (capella.MLDSA87PubKey, error) {
 	switch v.Version {
 	case spec.BuilderVersionV1:
 		if v.V1 == nil {
-			return capella.BLSPubKey{}, ErrDataMissing
+			return capella.MLDSA87PubKey{}, ErrDataMissing
 		}
 
 		return v.V1.Message.Pubkey, nil
 	default:
-		return capella.BLSPubKey{}, ErrUnsupportedVersion
+		return capella.MLDSA87PubKey{}, ErrUnsupportedVersion
 	}
 }
 

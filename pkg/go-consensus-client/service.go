@@ -23,7 +23,7 @@ import (
 	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
 )
 
-// Service is the service providing a connection to a QRL client.
+// Service is the service providing a connection to a QRL consensus client.
 type Service interface {
 	// Name returns the name of the client implementation.
 	Name() string
@@ -94,7 +94,7 @@ type ValidatorIndexProvider interface {
 // ValidatorPubKeyProvider is the interface for entities that can provide the public key of a validator.
 type ValidatorPubKeyProvider interface {
 	// PubKey provides the public key of the validator.
-	PubKey(ctx context.Context) (capella.BLSPubKey, error)
+	PubKey(ctx context.Context) (capella.MLDSA87PubKey, error)
 }
 
 // ValidatorIDProvider is the interface that provides the identifiers (pubkey, index) of a validator.

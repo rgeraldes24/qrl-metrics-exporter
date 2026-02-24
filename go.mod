@@ -3,7 +3,7 @@ module github.com/theQRL/qrl-metrics-exporter
 go 1.25.5
 
 require (
-	github.com/OffchainLabs/go-bitfield v0.0.0-20251031151322-f427d04d8506
+	github.com/theQRL/go-bitfield v0.0.0-20231204084259-f3b877be8f63
 	github.com/chuckpreslar/emission v0.0.0-20170206194824-a7ddd980baf9
 	github.com/docker/docker v26.1.5+incompatible
 	github.com/ethpandaops/beacon v0.67.0

@@ -101,6 +101,6 @@ func (v *Validator) String() string {
 }
 
 // PubKey implements ValidatorPubKeyProvider.
-func (v *Validator) PubKey(_ context.Context) (capella.BLSPubKey, error) {
+func (v *Validator) PubKey(_ context.Context) (capella.MLDSA87PubKey, error) {
 	return v.Validator.PublicKey, nil
 }

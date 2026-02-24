@@ -26,7 +26,7 @@ import (
 
 // ProposerDuty represents a duty of a validator to propose a slot.
 type ProposerDuty struct {
-	PubKey         capella.BLSPubKey
+	PubKey         capella.MLDSA87PubKey
 	Slot           capella.Slot
 	ValidatorIndex capella.ValidatorIndex
 }

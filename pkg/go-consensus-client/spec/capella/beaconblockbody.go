@@ -26,7 +26,7 @@ import (
 
 // BeaconBlockBody represents the body of a beacon block.
 type BeaconBlockBody struct {
-	RANDAOReveal      BLSSignature `ssz-size:"96"`
+	RANDAOReveal      MLDSA87Signature `ssz-size:"4627"`
 	ExecutionData     *ExecutionData
 	Graffiti          [32]byte               `ssz-size:"32"`
 	ProposerSlashings []*ProposerSlashing    `dynssz-max:"MAX_PROPOSER_SLASHINGS" ssz-max:"16"`

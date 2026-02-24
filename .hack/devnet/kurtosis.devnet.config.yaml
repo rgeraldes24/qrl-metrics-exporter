@@ -3,7 +3,14 @@ participants:
     el_image: qrledger/client-go:stable
     cl_type: qrysm
     cl_image: qrledger/qrysm-beacon
+    cl_extra_params:
+      - "--min-sync-peers=0"
+      - "--minimum-peers-per-subnet=0"
+      - "--sync-from=head"
+    vc_type: qrysm
+    vc_image: qrledger/qrysm:validator-latest
     count: 2
 network_params:
-  seconds_per_slot: 60
-persistent: true
+  preset: "mainnet"
+  prefunded_accounts: '{"QD5812F6cf4a0f645aA620CD57319a0Ed649Dd8f5": {"balance": "2000000QRL"}, "Qa5AEDb928f8300DE98C66bb4BB66b9bB137e9A17": {"balance": "2000000QRL"}}' # tx spammer/clef accounts
+  light_kdf_enabled: True

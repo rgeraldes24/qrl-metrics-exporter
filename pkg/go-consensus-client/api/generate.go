@@ -16,5 +16,7 @@ package api
 //nolint:revive
 // Need to `go install github.com/ferranbt/fastssz/sszgen@latest` for this to work.
 //go:generate rm -f versionedblindedbeaconblock_ssz.go versionedsignedblindedbeaconblock_ssz.go versionedsignedvalidatorregistration_ssz.go
-//go:generate sszgen -suffix=ssz -path . -include ../spec,../spec/capella,v1,v1/capella -exclude-objs DataVersion -objs VersionedBlindedBeaconBlock,VersionedSignedBlindedBeaconBlock,VersionedSignedValidatorRegistration
+//go:generate sszgen -suffix ssz -path . -include ../spec,../spec/capella,v1/capella -exclude-objs DataVersion -objs VersionedBlindedBeaconBlock
+//go:generate sszgen -suffix ssz -path . -include ../spec,../spec/capella,v1/capella -exclude-objs DataVersion -objs VersionedSignedBlindedBeaconBlock
+//go:generate sszgen -suffix ssz -path . -include ../spec,../spec/capella,v1 -exclude-objs DataVersion -objs VersionedSignedValidatorRegistration
 //go:generate goimports -w versionedblindedbeaconblock_ssz.go versionedsignedblindedbeaconblock_ssz.go versionedsignedvalidatorregistration_ssz.go

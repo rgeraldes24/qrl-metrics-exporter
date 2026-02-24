@@ -16,15 +16,23 @@ package capella_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/goccy/go-yaml"
 	"github.com/stretchr/testify/assert"
-	require "github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/require"
 	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
 )
 
+const syncCommitteeContributionBeaconBlockRoot = "0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c"
+
 func TestSyncCommitteeContributionJSON(t *testing.T) {
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+	shortSignature := "0x" + strings.Repeat("61", capella.SignatureLength-1)
+	longSignature := "0x" + strings.Repeat("61", capella.SignatureLength+1)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -41,102 +49,102 @@ func TestSyncCommitteeContributionJSON(t *testing.T) {
 		},
 		{
 			name:  "SlotMissing",
-			input: []byte(`{"beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "slot missing",
 		},
 		{
 			name:  "SlotWrongType",
-			input: []byte(`{"slot":true,"beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":true,"beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field syncCommitteeContributionJSON.slot of type string",
 		},
 		{
 			name:  "SlotInvalid",
-			input: []byte(`{"slot":"-1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"-1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "invalid value for slot: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
-			name:  "BeaconBlockRootWrongMissing",
-			input: []byte(`{"slot":"1","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			name:  "BeaconBlockRootMissing",
+			input: []byte(fmt.Sprintf(`{"slot":"1","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, validSignature)),
 			err:   "beacon block root missing",
 		},
 		{
 			name:  "BeaconBlockRootWrongType",
-			input: []byte(`{"slot":"1","beacon_block_root":true,"subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":true,"subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, validSignature)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field syncCommitteeContributionJSON.beacon_block_root of type string",
 		},
 		{
 			name:  "BeaconBlockRootInvalid",
-			input: []byte(`{"slot":"1","beacon_block_root":"invalid","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"invalid","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, validSignature)),
 			err:   "invalid value for beacon block root: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "BeaconBlockRootShort",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d06448","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
-			err:   "incorrect length for beacon block root",
-		},
-		{
-			name:  "BeaconBlockRootLong",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c1c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d06448","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, validSignature)),
 			err:   "incorrect length for beacon block root",
 		},
 		{
 			name:  "SubcommitteeIndexMissing",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "subcommittee index missing",
 		},
 		{
 			name:  "SubcommitteeIndexWrongType",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":true,"aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":true,"aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field syncCommitteeContributionJSON.subcommittee_index of type string",
 		},
 		{
 			name:  "SubcommitteeIndexInvalid",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"-3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"-3","aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "invalid value for subcommittee index: strconv.ParseUint: parsing \"-3\": invalid syntax",
 		},
 		{
 			name:  "AggregationBitsMissing",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "aggregation bits missing",
 		},
 		{
 			name:  "AggregationBitsWrongType",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":true,"signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":true,"signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field syncCommitteeContributionJSON.aggregation_bits of type string",
 		},
 		{
 			name:  "AggregationBitsInvalid",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"invalid","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"invalid","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 			err:   "invalid value for aggregation bits: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
+			name:  "AggregationBitsWrongLength",
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x000400","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
+			err:   "incorrect length for aggregation bits",
+		},
+		{
 			name:  "SignatureMissing",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001"}`),
-			err:   "signature missing",
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004"}`, syncCommitteeContributionBeaconBlockRoot)),
+			err:   "signatures missing",
 		},
 		{
 			name:  "SignatureWrongType",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":true}`),
-			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field syncCommitteeContributionJSON.signature of type string",
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":true}`, syncCommitteeContributionBeaconBlockRoot)),
+			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field syncCommitteeContributionJSON.signatures of type []string",
 		},
 		{
 			name:  "SignatureInvalid",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"invalid"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["invalid"]}`, syncCommitteeContributionBeaconBlockRoot)),
 			err:   "invalid value for signature: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "SignatureShort",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c2"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, shortSignature)),
 			err:   "incorrect length for signature",
 		},
 		{
 			name:  "SignatureLong",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c1c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, longSignature)),
 			err:   "incorrect length for signature",
 		},
 		{
 			name:  "Good",
-			input: []byte(`{"slot":"1","beacon_block_root":"0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c","subcommittee_index":"3","aggregation_bits":"0x0004000000000000000000000000000001","signature":"0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c"}`),
+			input: []byte(fmt.Sprintf(`{"slot":"1","beacon_block_root":"%s","subcommittee_index":"3","aggregation_bits":"0x0004","signatures":["%s"]}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 		},
 	}
 
@@ -157,6 +165,8 @@ func TestSyncCommitteeContributionJSON(t *testing.T) {
 }
 
 func TestSyncCommitteeContributionYAML(t *testing.T) {
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -165,7 +175,7 @@ func TestSyncCommitteeContributionYAML(t *testing.T) {
 	}{
 		{
 			name:  "Good",
-			input: []byte(`{slot: 1, beacon_block_root: '0xbacd20f09da907734434f052bd4c9503aa16bab1960e89ea20610d08d064481c', subcommittee_index: 3, aggregation_bits: '0x0004000000000000000000000000000001', signature: '0xb591bd4ca7d745b6e027879645d7c014fecb8c58631af070f7607acc0c1c948a5102a33267f0e4ba41a85b254b07df91185274375b2e6436e37e81d2fd46cb3751f5a6c86efb7499c1796c0c17e122a54ac067bb0f5ff41f3241659cceb0c21c'}`),
+			input: []byte(fmt.Sprintf(`{slot: 1, beacon_block_root: '%s', subcommittee_index: 3, aggregation_bits: '0x0004', signatures: ['%s']}`, syncCommitteeContributionBeaconBlockRoot, validSignature)),
 		},
 	}
 

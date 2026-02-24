@@ -59,17 +59,17 @@ func (v *VersionedBlindedBeaconBlock) ProposerIndex() (capella.ValidatorIndex, e
 }
 
 // RandaoReveal returns the RANDAO reveal of the blinded beacon block.
-func (v *VersionedBlindedBeaconBlock) RandaoReveal() (capella.BLSSignature, error) {
+func (v *VersionedBlindedBeaconBlock) RandaoReveal() (capella.MLDSA87Signature, error) {
 	switch v.Version {
 	case spec.DataVersionCapella:
 		if v.Capella == nil ||
 			v.Capella.Body == nil {
-			return capella.BLSSignature{}, ErrDataMissing
+			return capella.MLDSA87Signature{}, ErrDataMissing
 		}
 
 		return v.Capella.Body.RANDAOReveal, nil
 	default:
-		return capella.BLSSignature{}, ErrUnsupportedVersion
+		return capella.MLDSA87Signature{}, ErrUnsupportedVersion
 	}
 }
 

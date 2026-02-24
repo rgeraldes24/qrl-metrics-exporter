@@ -16,6 +16,8 @@ package capella_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -24,7 +26,16 @@ import (
 	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
 )
 
+const (
+	indexedAttestationDataJSON = `{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}}`
+	indexedAttestationDataYAML = `{slot: 100, index: 1, beacon_block_root: '0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f', source: {epoch: 1, root: '0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f'}, target: {epoch: 2, root: '0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f'}}`
+)
+
 func TestIndexedAttestationJSON(t *testing.T) {
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+	shortSignature := "0x" + strings.Repeat("61", capella.SignatureLength-1)
+	longSignature := "0x" + strings.Repeat("61", capella.SignatureLength+1)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -42,67 +53,67 @@ func TestIndexedAttestationJSON(t *testing.T) {
 		// Spec tests contain indexed attestations without attesting indices.
 		// {
 		// 	name:  "AttestingIndicesMissing",
-		// 	input: []byte(`{"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+		// 	input: []byte(`{"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signatures":["0x..."]}`),
 		// 	err:   "attesting indices missing",
 		// },
 		// {
 		// 	name:  "AttestingIndicesEmpty",
-		// 	input: []byte(`{"attesting_indices":[],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+		// 	input: []byte(`{"attesting_indices":[],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signatures":["0x..."]}`),
 		// 	err:   "attesting indices missing",
 		// },
 		{
 			name:  "AttestingIndicesWrongType",
-			input: []byte(`{"attesting_indices":true,"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":true,"data":%s,"signatures":["%s"]}`, indexedAttestationDataJSON, validSignature)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field indexedAttestationJSON.attesting_indices of type []string",
 		},
 		{
 			name:  "AttestingIndicesInvalid",
-			input: []byte(`{"attesting_indices":["-1","2","3"],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["-1","2","3"],"data":%s,"signatures":["%s"]}`, indexedAttestationDataJSON, validSignature)),
 			err:   "failed to parse attesting index: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
 			name:  "DataMissing",
-			input: []byte(`{"attesting_indices":["1","2","3"],"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"signatures":["%s"]}`, validSignature)),
 			err:   "data missing",
 		},
 		{
 			name:  "DataWrongType",
-			input: []byte(`{"attesting_indices":["1","2","3"],"data":true,"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"data":true,"signatures":["%s"]}`, validSignature)),
 			err:   "invalid JSON: invalid JSON: json: cannot unmarshal bool into Go value of type capella.attestationDataJSON",
 		},
 		{
 			name:  "DataInvalid",
-			input: []byte(`{"attesting_indices":["1","2","3"],"data":{},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"data":{},"signatures":["%s"]}`, validSignature)),
 			err:   "invalid JSON: slot missing",
 		},
 		{
 			name:  "SignatureMissing",
-			input: []byte(`{"attesting_indices":["1","2","3"],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}}}`),
-			err:   "signature missing",
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"data":%s}`, indexedAttestationDataJSON)),
+			err:   "signatures missing",
 		},
 		{
 			name:  "SignatureWrongType",
-			input: []byte(`{"attesting_indices":["1","2","3"],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":true}`),
-			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field indexedAttestationJSON.signature of type string",
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"data":%s,"signatures":true}`, indexedAttestationDataJSON)),
+			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field indexedAttestationJSON.signatures of type []string",
 		},
 		{
 			name:  "SignatureInvalid",
-			input: []byte(`{"attesting_indices":["1","2","3"],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"invalid"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"data":%s,"signatures":["invalid"]}`, indexedAttestationDataJSON)),
 			err:   "invalid value for signature: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "SignatureShort",
-			input: []byte(`{"attesting_indices":["1","2","3"],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x6162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"data":%s,"signatures":["%s"]}`, indexedAttestationDataJSON, shortSignature)),
 			err:   "incorrect length for signature",
 		},
 		{
 			name:  "SignatureLong",
-			input: []byte(`{"attesting_indices":["1","2","3"],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x60606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"data":%s,"signatures":["%s"]}`, indexedAttestationDataJSON, longSignature)),
 			err:   "incorrect length for signature",
 		},
 		{
 			name:  "Good",
-			input: []byte(`{"attesting_indices":["1","2","3"],"data":{"slot":"100","index":"1","beacon_block_root":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f","source":{"epoch":"1","root":"0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"},"target":{"epoch":"2","root":"0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f"}},"signature":"0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf"}`),
+			input: []byte(fmt.Sprintf(`{"attesting_indices":["1","2","3"],"data":%s,"signatures":["%s"]}`, indexedAttestationDataJSON, validSignature)),
 		},
 	}
 
@@ -123,6 +134,8 @@ func TestIndexedAttestationJSON(t *testing.T) {
 }
 
 func TestIndexedAttestationYAML(t *testing.T) {
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -131,7 +144,7 @@ func TestIndexedAttestationYAML(t *testing.T) {
 	}{
 		{
 			name:  "Good",
-			input: []byte(`{attesting_indices: [1, 2, 3], data: {slot: 100, index: 1, beacon_block_root: '0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f', source: {epoch: 1, root: '0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f'}, target: {epoch: 2, root: '0x404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f'}}, signature: '0x606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf'}`),
+			input: []byte(fmt.Sprintf(`{attesting_indices: [1, 2, 3], data: %s, signatures: ['%s']}`, indexedAttestationDataYAML, validSignature)),
 		},
 	}
 
