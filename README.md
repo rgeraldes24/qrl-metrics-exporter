@@ -12,11 +12,6 @@ To provide these client-agnostic metrics the exporter relies entirely on these w
 
 Naturally this means that the exporter is limited to metrics that are exposed by these APIs.
 
-## Built With
-
-* [pf13/cobra-cli](https://github.com/spf13/cobra-cli)
-* [theQRL/go-zond](https://github.com/theQRL/go-zond)
-* [attestantio/go-eth2-client](github.com/attestantio/go-eth2-client)
 ## Usage
 
 ```
@@ -221,3 +216,7 @@ Contributions are greatly appreciated! Pull requests will be reviewed and merged
 ## Contact
 
 Sam - [@samcmau](https://twitter.com/samcmau)
+
+## TODO
+
+Execution requests

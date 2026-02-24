@@ -1,0 +1,106 @@
+package beacon
+
+import (
+	"context"
+	"time"
+
+	"github.com/theQRL/qrl-metrics-exporter/pkg/beacon/api/types"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/beacon/state"
+	v1 "github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/api/v1"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
+)
+
+// Official beacon events that are proxied.
+func (n *node) publishBlock(ctx context.Context, event *v1.BlockEvent) {
+	n.broker.Emit(topicBlock, event)
+}
+
+func (n *node) publishBlockGossip(ctx context.Context, event *v1.BlockGossipEvent) {
+	n.broker.Emit(topicBlockGossip, event)
+}
+
+func (n *node) publishAttestation(ctx context.Context, event *spec.VersionedAttestation) {
+	n.broker.Emit(topicAttestation, event)
+}
+
+func (n *node) publishChainReOrg(ctx context.Context, event *v1.ChainReorgEvent) {
+	n.broker.Emit(topicChainReorg, event)
+}
+
+func (n *node) publishFinalizedCheckpoint(ctx context.Context, event *v1.FinalizedCheckpointEvent) {
+	n.broker.Emit(topicFinalizedCheckpoint, event)
+}
+
+func (n *node) publishHead(ctx context.Context, event *v1.HeadEvent) {
+	n.broker.Emit(topicHead, event)
+}
+
+func (n *node) publishVoluntaryExit(ctx context.Context, event *capella.SignedVoluntaryExit) {
+	n.broker.Emit(topicVoluntaryExit, event)
+}
+
+func (n *node) publishContributionAndProof(ctx context.Context, event *capella.SignedContributionAndProof) {
+	n.broker.Emit(topicContributionAndProof, event)
+}
+
+func (n *node) publishEvent(ctx context.Context, event *v1.Event) {
+	n.broker.Emit(topicEvent, event)
+}
+
+// Custom Events derived from our pseudo beacon node.
+func (n *node) publishReady(ctx context.Context) {
+	n.broker.Emit(topicReady, nil)
+}
+
+func (n *node) publishSyncStatus(ctx context.Context, st *v1.SyncState) {
+	n.broker.Emit(topicSyncStatus, &SyncStatusEvent{
+		State: st,
+	})
+}
+
+func (n *node) publishNodeVersionUpdated(ctx context.Context, version string) {
+	n.broker.Emit(topicNodeVersionUpdated, &NodeVersionUpdatedEvent{
+		Version: version,
+	})
+}
+
+func (n *node) publishPeersUpdated(ctx context.Context, peers types.Peers) {
+	n.broker.Emit(topicPeersUpdated, &PeersUpdatedEvent{
+		Peers: peers,
+	})
+}
+
+func (n *node) publishSpecUpdated(ctx context.Context, spec *state.Spec) {
+	n.broker.Emit(topicSpecUpdated, &SpecUpdatedEvent{
+		Spec: spec,
+	})
+}
+
+func (n *node) publishEmptySlot(ctx context.Context, slot capella.Slot) {
+	n.broker.Emit(topicEmptySlot, &EmptySlotEvent{
+		Slot: slot,
+	})
+}
+
+func (n *node) publishHealthCheckSucceeded(ctx context.Context, duration time.Duration) {
+	n.broker.Emit(topicHealthCheckSucceeded, &HealthCheckSucceededEvent{
+		Duration: duration,
+	})
+}
+
+func (n *node) publishHealthCheckFailed(ctx context.Context, duration time.Duration) {
+	n.broker.Emit(topicHealthCheckFailed, &HealthCheckFailedEvent{
+		Duration: duration,
+	})
+}
+
+func (n *node) publishFinalityCheckpointUpdated(ctx context.Context, finality *v1.Finality) {
+	n.broker.Emit(topicFinalityCheckpointUpdated, &FinalityCheckpointUpdated{
+		Finality: finality,
+	})
+}
+
+func (n *node) publishFirstTimeHealthy(ctx context.Context) {
+	n.broker.Emit(topicFirstTimeHealthy, &FirstTimeHealthyEvent{})
+}

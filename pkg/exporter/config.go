@@ -3,7 +3,7 @@ package exporter
 import (
 	"time"
 
-	"github.com/ethpandaops/beacon/pkg/human"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/human"
 	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/docker"
 )
 

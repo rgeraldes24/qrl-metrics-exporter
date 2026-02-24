@@ -160,7 +160,6 @@ type Block struct {
 	Hash             string
 	ParentHash       string
 	Nonce            string
-	Sha3Uncles       string
 	LogsBloom        string
 	TransactionsRoot string
 	StateRoot        string
@@ -170,7 +169,6 @@ type Block struct {
 	GasLimit         int
 	GasUsed          int
 	Timestamp        int
-	Uncles           []string
 	Transactions     []Transaction
 }
 
@@ -248,7 +246,6 @@ type proxyBlockWithTransactions struct {
 	Hash             string             `json:"hash"`
 	ParentHash       string             `json:"parentHash"`
 	Nonce            string             `json:"nonce"`
-	Sha3Uncles       string             `json:"sha3Uncles"`
 	LogsBloom        string             `json:"logsBloom"`
 	TransactionsRoot string             `json:"transactionsRoot"`
 	StateRoot        string             `json:"stateRoot"`
@@ -258,7 +255,6 @@ type proxyBlockWithTransactions struct {
 	GasLimit         hexInt             `json:"gasLimit"`
 	GasUsed          hexInt             `json:"gasUsed"`
 	Timestamp        hexInt             `json:"timestamp"`
-	Uncles           []string           `json:"uncles"`
 	Transactions     []proxyTransaction `json:"transactions"`
 }
 
@@ -271,7 +267,6 @@ type proxyBlockWithoutTransactions struct {
 	Hash             string   `json:"hash"`
 	ParentHash       string   `json:"parentHash"`
 	Nonce            string   `json:"nonce"`
-	Sha3Uncles       string   `json:"sha3Uncles"`
 	LogsBloom        string   `json:"logsBloom"`
 	TransactionsRoot string   `json:"transactionsRoot"`
 	StateRoot        string   `json:"stateRoot"`
@@ -281,7 +276,6 @@ type proxyBlockWithoutTransactions struct {
 	GasLimit         hexInt   `json:"gasLimit"`
 	GasUsed          hexInt   `json:"gasUsed"`
 	Timestamp        hexInt   `json:"timestamp"`
-	Uncles           []string `json:"uncles"`
 	Transactions     []string `json:"transactions"`
 }
 
@@ -291,7 +285,6 @@ func (proxy *proxyBlockWithoutTransactions) toBlock() Block {
 		Hash:             proxy.Hash,
 		ParentHash:       proxy.ParentHash,
 		Nonce:            proxy.Nonce,
-		Sha3Uncles:       proxy.Sha3Uncles,
 		LogsBloom:        proxy.LogsBloom,
 		TransactionsRoot: proxy.TransactionsRoot,
 		StateRoot:        proxy.StateRoot,
@@ -301,7 +294,6 @@ func (proxy *proxyBlockWithoutTransactions) toBlock() Block {
 		GasLimit:         int(proxy.GasLimit),
 		GasUsed:          int(proxy.GasUsed),
 		Timestamp:        int(proxy.Timestamp),
-		Uncles:           proxy.Uncles,
 	}
 
 	block.Transactions = make([]Transaction, len(proxy.Transactions))

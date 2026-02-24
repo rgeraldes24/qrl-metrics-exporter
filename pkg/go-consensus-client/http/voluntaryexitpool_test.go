@@ -1,0 +1,46 @@
+// Copyright © 2021 Attestant Limited.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package http_test
+
+import (
+	"context"
+	"testing"
+
+	client "github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/api"
+	"github.com/stretchr/testify/require"
+)
+
+func TestVoluntaryExitPool(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	tests := []struct {
+		name string
+	}{
+		{
+			name: "Good",
+		},
+	}
+
+	service := testService(ctx, t).(client.Service)
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			voluntaryExitPool, err := service.(client.VoluntaryExitPoolProvider).VoluntaryExitPool(ctx, &api.VoluntaryExitPoolOpts{})
+			require.NoError(t, err)
+			require.NotNil(t, voluntaryExitPool)
+		})
+	}
+}

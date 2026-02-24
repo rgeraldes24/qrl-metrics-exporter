@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter"
 	"gopkg.in/yaml.v2"
 )
 

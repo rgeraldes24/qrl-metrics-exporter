@@ -121,7 +121,6 @@ func (rpc *QRLRPC) Call(method string, params ...interface{}) (json.RawMessage, 
 	}
 
 	return resp.Result, nil
-
 }
 
 // RawCall returns raw response of method call (Deprecated)
@@ -282,28 +281,6 @@ func (rpc *QRLRPC) QRLGetBlockTransactionCountByNumber(number int) (int, error) 
 	var response string
 
 	if err := rpc.call("qrl_getBlockTransactionCountByNumber", &response, IntToHex(number)); err != nil {
-		return 0, err
-	}
-
-	return ParseInt(response)
-}
-
-// QRLGetUncleCountByBlockHash returns the number of uncles in a block from a block matching the given block hash.
-func (rpc *QRLRPC) QRLGetUncleCountByBlockHash(hash string) (int, error) {
-	var response string
-
-	if err := rpc.call("qrl_getUncleCountByBlockHash", &response, hash); err != nil {
-		return 0, err
-	}
-
-	return ParseInt(response)
-}
-
-// QRLGetUncleCountByBlockNumber returns the number of uncles in a block from a block matching the given block number.
-func (rpc *QRLRPC) QRLGetUncleCountByBlockNumber(number int) (int, error) {
-	var response string
-
-	if err := rpc.call("qrl_getUncleCountByBlockNumber", &response, IntToHex(number)); err != nil {
 		return 0, err
 	}
 

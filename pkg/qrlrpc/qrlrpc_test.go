@@ -430,22 +430,6 @@ func (s *QRLRPCTestSuite) TestQRLGetBlockTransactionCountByNumber() {
 	s.Require().Equal(232, count)
 }
 
-func (s *QRLRPCTestSuite) TestQRLGetUncleCountByBlockNumber() {
-	number := 3987434
-	s.registerResponseError(errors.New("Error"))
-	count, err := s.rpc.QRLGetUncleCountByBlockNumber(number)
-	s.Require().NotNil(err)
-
-	s.registerResponse(`"0x386"`, func(body []byte) {
-		s.methodEqual(body, "qrl_getUncleCountByBlockNumber")
-		s.paramsEqual(body, `["0x3cd7ea"]`)
-	})
-
-	count, err = s.rpc.QRLGetUncleCountByBlockNumber(number)
-	s.Require().Nil(err)
-	s.Require().Equal(902, count)
-}
-
 func (s *QRLRPCTestSuite) TestQRLGetCode() {
 	address := "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"
 	result := "0x600160008035811a818181146012578301005b601b6001356025565b8060005260206000f25b600060078202905091905056"
@@ -536,7 +520,6 @@ func (s *QRLRPCTestSuite) TestQRLGetCompilers() {
 	compilers, err := s.rpc.QRLGetCompilers()
 	s.Require().Nil(err)
 	s.Require().Equal([]string{"solidity", "some comp"}, compilers)
-
 }
 
 func (s *QRLRPCTestSuite) TestGetBlock() {
@@ -556,7 +539,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
         "nonce": "0xefd7ef000d0b78b8",
         "number": "0x4055d5",
         "parentHash": "0x913f938dcb4ff83b2b6b42a0cf6517d438a3ce95174e9342c780fd20c84dfd03",
-        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
         "size": "0x2fc6",
         "stateRoot": "0xab9287d3b8864338892d1d572198933979e39bfcfbde569ea52be15a9691b4c1",
         "timestamp": "0x59a556bd",
@@ -588,8 +570,7 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 				"value": "0x0"
 			}
 		],
-        "transactionsRoot": "0x97849642410701c38f904912238eb78d3aa854e72c5ae39394c7217f4f9474bc",
-        "uncles": ["0xf14cdb8a75de31dcf3da7a3a52c1fffcbaa3d56de9f50f86767fa411c10f4397"]
+        "transactionsRoot": "0x97849642410701c38f904912238eb78d3aa854e72c5ae39394c7217f4f9474bc"
 	}`
 	hash := "0x2bdda43f649c564642101fc990f569dd855e60f88bf83e931f509a92c62700f9"
 	s.registerResponse(result, func(body []byte) {
@@ -603,7 +584,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	s.Require().Equal(4216277, block.Number)
 	s.Require().Equal("0x913f938dcb4ff83b2b6b42a0cf6517d438a3ce95174e9342c780fd20c84dfd03", block.ParentHash)
 	s.Require().Equal("0xefd7ef000d0b78b8", block.Nonce)
-	s.Require().Equal("0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347", block.Sha3Uncles)
 	s.Require().Equal("0x111", block.LogsBloom)
 	s.Require().Equal("0x97849642410701c38f904912238eb78d3aa854e72c5ae39394c7217f4f9474bc", block.TransactionsRoot)
 	s.Require().Equal("0xab9287d3b8864338892d1d572198933979e39bfcfbde569ea52be15a9691b4c1", block.StateRoot)
@@ -613,7 +593,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	s.Require().Equal(6715648, block.GasLimit)
 	s.Require().Equal(6528928, block.GasUsed)
 	s.Require().Equal(1504007869, block.Timestamp)
-	s.Require().Equal([]string{"0xf14cdb8a75de31dcf3da7a3a52c1fffcbaa3d56de9f50f86767fa411c10f4397"}, block.Uncles)
 	s.Require().Equal(2, len(block.Transactions))
 
 	s.Require().Equal(Transaction{
@@ -658,15 +637,13 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 		"number": "0x4105f3",
 		"parentHash": "0xbc3e37984a619008d75e7f73865247fb420ae5ed2c921599d099ab5f20519396",
 		"receiptsRoot": "0xa1384524d42ff86fdf4e44eeea853aba4e772a52240037cbfddc22782bad017e",
-		"sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
 		"size": "0x490",
 		"stateRoot": "0xbe7e86ee05a5d49ba64b3d9f3f0129bab90308032e42307a1a2ef5c8971c5f5c",
 		"timestamp": "0x59b62713",
 		"transactions": [
 			"0x160e19780a24f3d78492c7ac7228e0220d4b96878fec19daf182e1d8c4b3d94e"
 		],
-		"transactionsRoot": "0x1bcd58c2420d63c5e8ed3182afd33c01737be38a4a8c10a81dfb70b692e8f286",
-		"uncles": []
+		"transactionsRoot": "0x1bcd58c2420d63c5e8ed3182afd33c01737be38a4a8c10a81dfb70b692e8f286"
 	}`
 
 	hash = "0x23be1464d0e805fe3cec49039a9cf7fae7c09d2efacbed2abb10ef7ddae960ab"
@@ -681,7 +658,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	s.Require().Equal(4261363, block.Number)
 	s.Require().Equal("0xbc3e37984a619008d75e7f73865247fb420ae5ed2c921599d099ab5f20519396", block.ParentHash)
 	s.Require().Equal("0x19a48ee424b5088f", block.Nonce)
-	s.Require().Equal("0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347", block.Sha3Uncles)
 	s.Require().Equal("0x222", block.LogsBloom)
 	s.Require().Equal("0x1bcd58c2420d63c5e8ed3182afd33c01737be38a4a8c10a81dfb70b692e8f286", block.TransactionsRoot)
 	s.Require().Equal("0xbe7e86ee05a5d49ba64b3d9f3f0129bab90308032e42307a1a2ef5c8971c5f5c", block.StateRoot)
@@ -691,7 +667,6 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	s.Require().Equal(6709099, block.GasLimit)
 	s.Require().Equal(120603, block.GasUsed)
 	s.Require().Equal(1505109779, block.Timestamp)
-	s.Require().Equal([]string{}, block.Uncles)
 	s.Require().Equal(1, len(block.Transactions))
 	s.Require().Equal(Transaction{
 		Hash:             "0x160e19780a24f3d78492c7ac7228e0220d4b96878fec19daf182e1d8c4b3d94e",

@@ -1,0 +1,76 @@
+package beacon
+
+import (
+	"context"
+	"net/http"
+	"time"
+
+	consensusclient "github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client"
+	ehttp "github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/http"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/beacon/api"
+)
+
+// ensureClients ensures that the node has a client and an API client.
+func (n *node) ensureClients(ctx context.Context) error {
+	failures := 0
+
+	zerologLevel := n.GetZeroLogLevel()
+
+	for {
+		if n.client != nil {
+			_, isProvider := n.client.(consensusclient.NodeSyncingProvider)
+			if isProvider {
+				break
+			}
+		}
+
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			timeout := 10 * time.Minute
+
+			extraParams := n.options.GetGoConsensusClientParams()
+			params := make([]ehttp.Parameter, 0, 4+len(extraParams))
+
+			params = append(params,
+				ehttp.WithAddress(n.config.Addr),
+				ehttp.WithLogLevel(zerologLevel),
+				ehttp.WithTimeout(timeout),
+				ehttp.WithExtraHeaders(n.config.Headers),
+			)
+
+			params = append(params, extraParams...)
+
+			client, err := ehttp.New(ctx, params...)
+			if err != nil {
+				failures++
+
+				sleepFor := time.Duration(failures) * (time.Second * 5)
+
+				// Clamp the sleep time to a maximum of 5 minutes.
+				if sleepFor > time.Minute*5 {
+					sleepFor = time.Minute * 5
+				}
+
+				n.log.WithError(err).Errorf("failed to bootstrap node.. will retry in %s", sleepFor.String())
+
+				time.Sleep(sleepFor)
+
+				continue
+			}
+
+			n.client = client
+
+			httpClient := http.Client{
+				Timeout: timeout,
+			}
+
+			n.api = api.NewConsensusClient(ctx, n.log, n.config.Addr, httpClient, n.config.Headers)
+
+			break
+		}
+	}
+
+	return nil
+}

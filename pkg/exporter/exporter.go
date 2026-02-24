@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethpandaops/beacon/pkg/beacon"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/beacon"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/qrl-metrics-exporter/pkg/exporter/disk"

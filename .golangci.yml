@@ -53,6 +53,8 @@ linters:
       - third_party$
       - builtin$
       - examples$
+      - "^pkg/"
+
 formatters:
   enable:
     - gofmt

@@ -1,0 +1,152 @@
+// Copyright © 2020, 2021 Attestant Limited.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package http_test
+
+import (
+	"context"
+	"os"
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	client "github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client"
+	v1 "github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/http"
+)
+
+func TestService(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	tests := []struct {
+		name       string
+		parameters []v1.Parameter
+		location   string
+		err        string
+	}{
+		{
+			name: "Nil",
+			err:  "problem with parameters\nno address specified",
+		},
+		{
+			name: "AddressNil",
+			parameters: []v1.Parameter{
+				v1.WithTimeout(5 * time.Second),
+			},
+			err: "problem with parameters\nno address specified",
+		},
+		{
+			name: "TimeoutZero",
+			parameters: []v1.Parameter{
+				v1.WithAddress(os.Getenv("HTTP_ADDRESS")),
+				v1.WithTimeout(0),
+			},
+			err: "problem with parameters\nno timeout specified",
+		},
+		{
+			name: "AddressInvalid",
+			parameters: []v1.Parameter{
+				v1.WithAddress(string([]byte{0x01})),
+				v1.WithTimeout(5 * time.Second),
+			},
+			err: "invalid URL\nparse \"http://\\x01\": net/url: invalid control character in URL",
+		},
+		{
+			name: "IndexChunkSizeZero",
+			parameters: []v1.Parameter{
+				v1.WithAddress(os.Getenv("HTTP_ADDRESS")),
+				v1.WithTimeout(5 * time.Second),
+				v1.WithIndexChunkSize(0),
+			},
+			err: "problem with parameters\nno index chunk size specified",
+		},
+		{
+			name: "PubKeyChunkSizeZero",
+			parameters: []v1.Parameter{
+				v1.WithAddress(os.Getenv("HTTP_ADDRESS")),
+				v1.WithTimeout(5 * time.Second),
+				v1.WithPubKeyChunkSize(0),
+			},
+			err: "problem with parameters\nno public key chunk size specified",
+		},
+		{
+			name: "HooksMissing",
+			parameters: []v1.Parameter{
+				v1.WithAddress(os.Getenv("HTTP_ADDRESS")),
+				v1.WithTimeout(5 * time.Second),
+				v1.WithHooks(nil),
+			},
+			err: "problem with parameters\nno hooks specified",
+		},
+		{
+			name: "Good",
+			parameters: []v1.Parameter{
+				v1.WithAddress(os.Getenv("HTTP_ADDRESS")),
+				v1.WithTimeout(5 * time.Second),
+				v1.WithAllowDelayedStart(true),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			_, err := v1.New(ctx, test.parameters...)
+			if test.err != "" {
+				require.EqualError(t, err, test.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestInterfaces(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Use testService helper (returns interface{}, needs type assertion)
+	s := testService(ctx, t)
+
+	// Standard interfaces.
+	assert.Implements(t, (*client.AggregateAttestationProvider)(nil), s)
+	assert.Implements(t, (*client.AttestationDataProvider)(nil), s)
+	assert.Implements(t, (*client.AttestationPoolProvider)(nil), s)
+	assert.Implements(t, (*client.AttesterDutiesProvider)(nil), s)
+	assert.Implements(t, (*client.BeaconBlockHeadersProvider)(nil), s)
+	assert.Implements(t, (*client.BeaconBlockRootProvider)(nil), s)
+	assert.Implements(t, (*client.BeaconStateProvider)(nil), s)
+	assert.Implements(t, (*client.BeaconStateRandaoProvider)(nil), s)
+	assert.Implements(t, (*client.BeaconStateRootProvider)(nil), s)
+	assert.Implements(t, (*client.DepositContractProvider)(nil), s)
+	assert.Implements(t, (*client.EventsProvider)(nil), s)
+	assert.Implements(t, (*client.FinalityProvider)(nil), s)
+	assert.Implements(t, (*client.ForkProvider)(nil), s)
+	assert.Implements(t, (*client.ForkScheduleProvider)(nil), s)
+	assert.Implements(t, (*client.GenesisProvider)(nil), s)
+	assert.Implements(t, (*client.NodeSyncingProvider)(nil), s)
+	assert.Implements(t, (*client.ProposalProvider)(nil), s)
+	assert.Implements(t, (*client.ProposerDutiesProvider)(nil), s)
+	assert.Implements(t, (*client.SpecProvider)(nil), s)
+	assert.Implements(t, (*client.SyncCommitteeContributionProvider)(nil), s)
+	assert.Implements(t, (*client.SyncCommitteeDutiesProvider)(nil), s)
+	assert.Implements(t, (*client.SyncCommitteesProvider)(nil), s)
+	assert.Implements(t, (*client.ValidatorBalancesProvider)(nil), s)
+	assert.Implements(t, (*client.ValidatorLivenessProvider)(nil), s)
+	assert.Implements(t, (*client.ValidatorsProvider)(nil), s)
+	assert.Implements(t, (*client.VoluntaryExitPoolProvider)(nil), s)
+
+	// Non-standard extensions.
+	assert.Implements(t, (*client.DomainProvider)(nil), s)
+	assert.Implements(t, (*client.GenesisTimeProvider)(nil), s)
+}
