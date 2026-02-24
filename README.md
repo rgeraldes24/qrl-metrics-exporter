@@ -212,11 +212,3 @@ Contributions are greatly appreciated! Pull requests will be reviewed and merged
 4. Push to the branch:
     -`git push origin feat/new-metric-profit`
 5. Open a pull request
-
-## Contact
-
-Sam - [@samcmau](https://twitter.com/samcmau)
-
-## TODO
-
-Execution requests
