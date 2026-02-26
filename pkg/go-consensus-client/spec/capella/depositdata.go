@@ -29,7 +29,7 @@ import (
 type DepositData struct {
 	PublicKey             MLDSA87PubKey `ssz-size:"2592"`
 	WithdrawalCredentials []byte        `ssz-size:"32"`
-	Amount                Gwei
+	Amount                Shor
 	Signature             MLDSA87Signature `ssz-size:"4627"`
 }
 
@@ -144,7 +144,7 @@ func (d *DepositData) unpack(depositDataJSON *depositDataJSON) error {
 		return errors.Wrap(err, "invalid value for amount")
 	}
 
-	d.Amount = Gwei(amount)
+	d.Amount = Shor(amount)
 
 	if depositDataJSON.Signature == "" {
 		return errors.New("signature missing")

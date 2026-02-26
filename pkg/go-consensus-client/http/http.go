@@ -380,7 +380,7 @@ func (s *Service) get(ctx context.Context,
 func populateConsensusVersion(res *httpResponse, resp *http.Response) error {
 	res.consensusVersion = spec.DataVersionUnknown
 
-	respConsensusVersions, exists := resp.Header["Eth-Consensus-Version"]
+	respConsensusVersions, exists := resp.Header["Qrl-Consensus-Version"]
 	if !exists {
 		// No consensus version supplied in response; obtain it from the body if possible.
 		if res.contentType != ContentTypeJSON {

@@ -30,12 +30,12 @@ type AttestationRewards struct {
 
 // IdealAttestationRewards are the ideal attestation rewards for an attestation.
 type IdealAttestationRewards struct {
-	EffectiveBalance capella.Gwei
-	Head             capella.Gwei
-	Target           capella.Gwei
-	Source           capella.Gwei
-	InclusionDelay   *capella.Gwei
-	Inactivity       capella.Gwei
+	EffectiveBalance capella.Shor
+	Head             capella.Shor
+	Target           capella.Shor
+	Source           capella.Shor
+	InclusionDelay   *capella.Shor
+	Inactivity       capella.Shor
 }
 
 // idealAttestationRewardsJSON is the spec representation of the struct.
@@ -83,7 +83,7 @@ func (i *IdealAttestationRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for effective balance")
 	}
 
-	i.EffectiveBalance = capella.Gwei(effectiveBalance)
+	i.EffectiveBalance = capella.Shor(effectiveBalance)
 
 	if data.Head == "" {
 		return errors.New("head missing")
@@ -94,7 +94,7 @@ func (i *IdealAttestationRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for head")
 	}
 
-	i.Head = capella.Gwei(head)
+	i.Head = capella.Shor(head)
 
 	if data.Target == "" {
 		return errors.New("target missing")
@@ -105,7 +105,7 @@ func (i *IdealAttestationRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for target")
 	}
 
-	i.Target = capella.Gwei(target)
+	i.Target = capella.Shor(target)
 
 	if data.Source == "" {
 		return errors.New("source missing")
@@ -116,7 +116,7 @@ func (i *IdealAttestationRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for source")
 	}
 
-	i.Source = capella.Gwei(source)
+	i.Source = capella.Shor(source)
 
 	if data.InclusionDelay != "" {
 		inclusionDelay, err := strconv.ParseUint(data.InclusionDelay, 10, 64)
@@ -124,7 +124,7 @@ func (i *IdealAttestationRewards) UnmarshalJSON(input []byte) error {
 			return errors.Wrap(err, "invalid value for inclusion delay")
 		}
 
-		tmp := capella.Gwei(inclusionDelay)
+		tmp := capella.Shor(inclusionDelay)
 		i.InclusionDelay = &tmp
 	}
 
@@ -137,7 +137,7 @@ func (i *IdealAttestationRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for inactivity")
 	}
 
-	i.Inactivity = capella.Gwei(inactivity)
+	i.Inactivity = capella.Shor(inactivity)
 
 	return nil
 }
@@ -155,13 +155,13 @@ func (i *IdealAttestationRewards) String() string {
 // ValidatorAttestationRewards are the ideal attestation rewards for a validator.
 type ValidatorAttestationRewards struct {
 	ValidatorIndex capella.ValidatorIndex
-	Head           capella.Gwei
-	// Target can be negative, so it is an int64 (but still a Gwei value).
+	Head           capella.Shor
+	// Target can be negative, so it is an int64 (but still a Shor value).
 	Target int64
-	// Source can be negative, so it is an int64 (but still a Gwei value).
+	// Source can be negative, so it is an int64 (but still a Shor value).
 	Source         int64
-	InclusionDelay *capella.Gwei
-	Inactivity     capella.Gwei
+	InclusionDelay *capella.Shor
+	Inactivity     capella.Shor
 }
 
 // validatorAttestationRewardsJSON is the spec representation of the struct.
@@ -220,7 +220,7 @@ func (v *ValidatorAttestationRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for head")
 	}
 
-	v.Head = capella.Gwei(head)
+	v.Head = capella.Shor(head)
 
 	if data.Target == "" {
 		return errors.New("target missing")
@@ -246,7 +246,7 @@ func (v *ValidatorAttestationRewards) UnmarshalJSON(input []byte) error {
 			return errors.Wrap(err, "invalid value for inclusion delay")
 		}
 
-		tmp := capella.Gwei(inclusionDelay)
+		tmp := capella.Shor(inclusionDelay)
 		v.InclusionDelay = &tmp
 	}
 
@@ -259,7 +259,7 @@ func (v *ValidatorAttestationRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for inactivity")
 	}
 
-	v.Inactivity = capella.Gwei(inactivity)
+	v.Inactivity = capella.Shor(inactivity)
 
 	return nil
 }

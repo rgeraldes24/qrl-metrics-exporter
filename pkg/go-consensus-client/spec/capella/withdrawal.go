@@ -30,7 +30,7 @@ type Withdrawal struct {
 	Index          WithdrawalIndex
 	ValidatorIndex ValidatorIndex
 	Address        ExecutionAddress `ssz-size:"20"`
-	Amount         Gwei
+	Amount         Shor
 }
 
 // withdrawalJSON is an internal representation of the struct.
@@ -154,7 +154,7 @@ func (w *Withdrawal) unpack(data *withdrawalJSON) error {
 		return errors.Wrap(err, "invalid value for amount")
 	}
 
-	w.Amount = Gwei(amount)
+	w.Amount = Shor(amount)
 
 	return nil
 }

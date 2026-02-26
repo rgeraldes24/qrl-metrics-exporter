@@ -29,7 +29,7 @@ import (
 type Validator struct {
 	PublicKey                  MLDSA87PubKey `ssz-size:"2592"`
 	WithdrawalCredentials      []byte        `ssz-size:"32"`
-	EffectiveBalance           Gwei
+	EffectiveBalance           Shor
 	Slashed                    bool
 	ActivationEligibilityEpoch Epoch
 	ActivationEpoch            Epoch
@@ -123,7 +123,7 @@ func (v *Validator) unpack(validatorJSON *validatorJSON) error {
 		return errors.Wrap(err, "invalid value for effective balance")
 	}
 
-	v.EffectiveBalance = Gwei(effectiveBalance)
+	v.EffectiveBalance = Shor(effectiveBalance)
 
 	v.Slashed = validatorJSON.Slashed
 	if validatorJSON.ActivationEligibilityEpoch == "" {

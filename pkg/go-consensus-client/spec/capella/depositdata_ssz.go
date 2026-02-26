@@ -53,7 +53,7 @@ func (d *DepositData) UnmarshalSSZ(buf []byte) error {
 	d.WithdrawalCredentials = append(d.WithdrawalCredentials, buf[2592:2624]...)
 
 	// Field (2) 'Amount'
-	d.Amount = Gwei(ssz.UnmarshallUint64(buf[2624:2632]))
+	d.Amount = Shor(ssz.UnmarshallUint64(buf[2624:2632]))
 
 	// Field (3) 'Signature'
 	copy(d.Signature[:], buf[2632:7259])

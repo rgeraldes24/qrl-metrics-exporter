@@ -142,6 +142,6 @@ func TestInvalidValidatorIndex(t *testing.T) {
 
 	balance, err := state.ValidatorBalance(validatorIndex)
 	require.Error(t, err, "validator index out of bounds")
-	require.Equal(t, capella.Gwei(0), balance)
+	require.Equal(t, capella.Shor(0), balance)
 }
 */

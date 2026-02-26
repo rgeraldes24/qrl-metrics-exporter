@@ -46,8 +46,8 @@ func NewGeneralMetrics(client *qrlclient.Client, internalAPI api.ExecutionClient
 		GasPrice: prometheus.NewGauge(
 			prometheus.GaugeOpts{
 				Namespace:   namespace,
-				Name:        "gas_price_gwei",
-				Help:        "The current gas price in gwei.",
+				Name:        "gas_price_shor",
+				Help:        "The current gas price in shor.",
 				ConstLabels: constLabels,
 			},
 		),

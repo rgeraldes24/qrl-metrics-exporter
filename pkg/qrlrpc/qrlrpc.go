@@ -208,7 +208,7 @@ func (rpc *QRLRPC) QRLMining() (bool, error) {
 	return mining, err
 }
 
-// QRLGasPrice returns the current price per gas in wei.
+// QRLGasPrice returns the current price per gas in planck.
 func (rpc *QRLRPC) QRLGasPrice() (big.Int, error) {
 	var response string
 	if err := rpc.call("qrl_gasPrice", &response); err != nil {
@@ -236,7 +236,7 @@ func (rpc *QRLRPC) QRLBlockNumber() (int, error) {
 	return ParseInt(response)
 }
 
-// QRLGetBalance returns the balance of the account of given address in wei.
+// QRLGetBalance returns the balance of the account of given address in planck.
 func (rpc *QRLRPC) QRLGetBalance(address, block string) (big.Int, error) {
 	var response string
 	if err := rpc.call("qrl_getBalance", &response, address, block); err != nil {
@@ -469,12 +469,12 @@ func (rpc *QRLRPC) QRLGetLogs(params FilterParams) ([]Log, error) {
 	return logs, err
 }
 
-// QRL1 returns 1 quanta value (10^18 wei)
+// QRL1 returns 1 quanta value (10^18 planck)
 func (rpc *QRLRPC) QRL1() *big.Int {
 	return QRL1()
 }
 
-// QRL1 returns 1 quanta value (10^18 wei)
+// QRL1 returns 1 quanta value (10^18 planck)
 func QRL1() *big.Int {
 	return big.NewInt(1000000000000000000)
 }

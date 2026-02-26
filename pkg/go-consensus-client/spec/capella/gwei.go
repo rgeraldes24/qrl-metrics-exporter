@@ -21,11 +21,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Gwei is an amount in Gwei.
-type Gwei uint64
+// shor is an amount in Shor.
+type Shor uint64
 
 // UnmarshalJSON implements json.Unmarshaler.
-func (g *Gwei) UnmarshalJSON(input []byte) error {
+func (s *Shor) UnmarshalJSON(input []byte) error {
 	if len(input) == 0 {
 		return errors.New("input missing")
 	}
@@ -47,18 +47,18 @@ func (g *Gwei) UnmarshalJSON(input []byte) error {
 		return errors.Wrapf(err, "invalid value %s", string(input[1:len(input)-1]))
 	}
 
-	*g = Gwei(val)
+	*s = Shor(val)
 
 	return nil
 }
 
 // MarshalJSON implements json.Marshaler.
-func (g Gwei) MarshalJSON() ([]byte, error) {
-	return fmt.Appendf(nil, `"%d"`, g), nil
+func (s Shor) MarshalJSON() ([]byte, error) {
+	return fmt.Appendf(nil, `"%d"`, s), nil
 }
 
 // UnmarshalYAML implements yaml.Unmarshaler.
-func (g *Gwei) UnmarshalYAML(input []byte) error {
+func (s *Shor) UnmarshalYAML(input []byte) error {
 	if len(input) == 0 {
 		return errors.New("input missing")
 	}
@@ -68,12 +68,12 @@ func (g *Gwei) UnmarshalYAML(input []byte) error {
 		return errors.Wrapf(err, "invalid value %s", string(input))
 	}
 
-	*g = Gwei(val)
+	*s = Shor(val)
 
 	return nil
 }
 
 // MarshalYAML implements yaml.Marshaler.
-func (g Gwei) MarshalYAML() ([]byte, error) {
-	return fmt.Appendf(nil, `%d`, g), nil
+func (s Shor) MarshalYAML() ([]byte, error) {
+	return fmt.Appendf(nil, `%d`, s), nil
 }

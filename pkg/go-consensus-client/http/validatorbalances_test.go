@@ -33,7 +33,7 @@ func TestValidatorBalances(t *testing.T) {
 		opts             *api.ValidatorBalancesOpts
 		err              string
 		errCodes         []int
-		expected         map[capella.ValidatorIndex]capella.Gwei
+		expected         map[capella.ValidatorIndex]capella.Shor
 		expectedBalances int
 	}{
 		{
@@ -67,7 +67,7 @@ func TestValidatorBalances(t *testing.T) {
 				State:   "0",
 				Indices: []capella.ValidatorIndex{123},
 			},
-			expected: map[capella.ValidatorIndex]capella.Gwei{
+			expected: map[capella.ValidatorIndex]capella.Shor{
 				123: 32000000000,
 			},
 		},

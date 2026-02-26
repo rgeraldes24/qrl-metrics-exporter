@@ -65,7 +65,7 @@ func (v *Validator) UnmarshalSSZ(buf []byte) error {
 	v.WithdrawalCredentials = append(v.WithdrawalCredentials, buf[2592:2624]...)
 
 	// Field (2) 'EffectiveBalance'
-	v.EffectiveBalance = Gwei(ssz.UnmarshallUint64(buf[2624:2632]))
+	v.EffectiveBalance = Shor(ssz.UnmarshallUint64(buf[2624:2632]))
 
 	// Field (3) 'Slashed'
 	v.Slashed = ssz.UnmarshalBool(buf[2632:2633])

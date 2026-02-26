@@ -30,7 +30,7 @@ import (
 func (s *Service) ValidatorBalances(ctx context.Context,
 	opts *api.ValidatorBalancesOpts,
 ) (
-	*api.Response[map[capella.ValidatorIndex]capella.Gwei],
+	*api.Response[map[capella.ValidatorIndex]capella.Shor],
 	error,
 ) {
 	if err := s.assertIsActive(ctx); err != nil {
@@ -78,7 +78,7 @@ func (s *Service) ValidatorBalances(ctx context.Context,
 func (*Service) validatorBalancesFromJSON(_ context.Context,
 	httpResponse *httpResponse,
 ) (
-	*api.Response[map[capella.ValidatorIndex]capella.Gwei],
+	*api.Response[map[capella.ValidatorIndex]capella.Shor],
 	error,
 ) {
 	data, metadata, err := decodeJSONResponse(bytes.NewReader(httpResponse.body), []*apiv1.ValidatorBalance{})
@@ -86,8 +86,8 @@ func (*Service) validatorBalancesFromJSON(_ context.Context,
 		return nil, err
 	}
 
-	response := &api.Response[map[capella.ValidatorIndex]capella.Gwei]{
-		Data:     make(map[capella.ValidatorIndex]capella.Gwei),
+	response := &api.Response[map[capella.ValidatorIndex]capella.Shor]{
+		Data:     make(map[capella.ValidatorIndex]capella.Shor),
 		Metadata: metadata,
 	}
 

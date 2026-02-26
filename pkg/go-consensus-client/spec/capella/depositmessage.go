@@ -29,7 +29,7 @@ import (
 type DepositMessage struct {
 	PublicKey             MLDSA87PubKey `ssz-size:"2592"`
 	WithdrawalCredentials []byte        `ssz-size:"32"`
-	Amount                Gwei
+	Amount                Shor
 }
 
 // depositMessageJSON is the spec representation of the struct.
@@ -139,7 +139,7 @@ func (d *DepositMessage) unpack(depositMessageJSON *depositMessageJSON) error {
 		return errors.Wrap(err, "invalid value for amount")
 	}
 
-	d.Amount = Gwei(amount)
+	d.Amount = Shor(amount)
 
 	return nil
 }

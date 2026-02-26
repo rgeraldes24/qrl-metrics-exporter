@@ -41,7 +41,7 @@ func (s *Service) AttestationPool(ctx context.Context,
 		return nil, client.ErrNoOptions
 	}
 
-	endpoint := "/qrl/v2/beacon/pool/attestations"
+	endpoint := "/qrl/v1/beacon/pool/attestations"
 
 	queryItems := make([]string, 0)
 	if opts.Slot != nil {

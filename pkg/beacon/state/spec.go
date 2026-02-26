@@ -28,9 +28,9 @@ type Spec struct {
 
 	MaxValidatorsPerCommittee uint64       `json:"MAX_VALIDATORS_PER_COMMITTEE,string"`
 	BaseRewardFactor          uint64       `json:"BASE_REWARD_FACTOR,string"`
-	EffectiveBalanceIncrement capella.Gwei `json:"EFFECTIVE_BALANCE_INCREMENT,string"`
-	MaxEffectiveBalance       capella.Gwei `json:"MAX_EFFECTIVE_BALANCE,string"`
-	MinDepositAmount          capella.Gwei `json:"MIN_DEPOSIT_AMOUNT,string"`
+	EffectiveBalanceIncrement capella.Shor `json:"EFFECTIVE_BALANCE_INCREMENT,string"`
+	MaxEffectiveBalance       capella.Shor `json:"MAX_EFFECTIVE_BALANCE,string"`
+	MinDepositAmount          capella.Shor `json:"MIN_DEPOSIT_AMOUNT,string"`
 	MaxAttestations           uint64       `json:"MAX_ATTESTATIONS,string"`
 
 	SecondsPerExecutionBlock       StringerDuration `json:"SECONDS_PER_EXECUTION_BLOCK,string"`
@@ -86,7 +86,7 @@ func NewSpec(data map[string]interface{}) Spec {
 	}
 
 	if effectiveBalanceIncrement, exists := data["EFFECTIVE_BALANCE_INCREMENT"]; exists {
-		spec.EffectiveBalanceIncrement = capella.Gwei(cast.ToUint64(effectiveBalanceIncrement))
+		spec.EffectiveBalanceIncrement = capella.Shor(cast.ToUint64(effectiveBalanceIncrement))
 	}
 
 	if maxAttestations, exists := data["MAX_ATTESTATIONS"]; exists {
@@ -106,7 +106,7 @@ func NewSpec(data map[string]interface{}) Spec {
 	}
 
 	if maxEffectiveBalance, exists := data["MAX_EFFECTIVE_BALANCE"]; exists {
-		spec.MaxEffectiveBalance = capella.Gwei(cast.ToUint64(maxEffectiveBalance))
+		spec.MaxEffectiveBalance = capella.Shor(cast.ToUint64(maxEffectiveBalance))
 	}
 
 	if maxDeposits, exists := data["MAX_DEPOSITS"]; exists {
@@ -130,7 +130,7 @@ func NewSpec(data map[string]interface{}) Spec {
 	}
 
 	if minDepositAmount, exists := data["MIN_DEPOSIT_AMOUNT"]; exists {
-		spec.MinDepositAmount = capella.Gwei(cast.ToUint64(minDepositAmount))
+		spec.MinDepositAmount = capella.Shor(cast.ToUint64(minDepositAmount))
 	}
 
 	if slotsPerEpoch, exists := data["SLOTS_PER_EPOCH"]; exists {

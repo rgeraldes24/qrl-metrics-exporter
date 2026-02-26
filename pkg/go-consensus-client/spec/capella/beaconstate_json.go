@@ -286,7 +286,7 @@ func (s *BeaconState) unpack(data *beaconStateJSON) error {
 		return errors.Wrap(err, "invalid value for execution deposit index")
 	}
 
-	s.Balances = make([]Gwei, len(data.Balances))
+	s.Balances = make([]Shor, len(data.Balances))
 	for i := range data.Balances {
 		if data.Balances[i] == "" {
 			return fmt.Errorf("balance %d missing", i)
@@ -297,7 +297,7 @@ func (s *BeaconState) unpack(data *beaconStateJSON) error {
 			return errors.Wrap(err, fmt.Sprintf("invalid value for balance %d", i))
 		}
 
-		s.Balances[i] = Gwei(balance)
+		s.Balances[i] = Shor(balance)
 	}
 
 	s.RANDAOMixes = make([]Root, len(data.RANDAOMixes))
@@ -318,7 +318,7 @@ func (s *BeaconState) unpack(data *beaconStateJSON) error {
 		copy(s.RANDAOMixes[i][:], randaoMix)
 	}
 
-	s.Slashings = make([]Gwei, len(data.Slashings))
+	s.Slashings = make([]Shor, len(data.Slashings))
 	for i := range data.Slashings {
 		if data.Slashings[i] == "" {
 			return fmt.Errorf("slashing %d missing", i)
@@ -329,7 +329,7 @@ func (s *BeaconState) unpack(data *beaconStateJSON) error {
 			return errors.Wrap(err, fmt.Sprintf("invalid value for slashing %d", i))
 		}
 
-		s.Slashings[i] = Gwei(slashings)
+		s.Slashings[i] = Shor(slashings)
 	}
 
 	s.PreviousEpochParticipation = make([]ParticipationFlags, len(data.PreviousEpochParticipation))

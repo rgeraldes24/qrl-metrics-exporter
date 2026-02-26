@@ -25,7 +25,7 @@ import (
 // SyncCommitteeReward is the rewards for a validator in a sync committee.
 type SyncCommitteeReward struct {
 	ValidatorIndex capella.ValidatorIndex
-	// Reward can be negative, so it is an int64 (but still a Gwei value).
+	// Reward can be negative, so it is an int64 (but still a Shor value).
 	Reward int64
 }
 

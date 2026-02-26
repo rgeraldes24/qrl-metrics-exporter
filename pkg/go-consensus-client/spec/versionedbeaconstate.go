@@ -75,7 +75,7 @@ func (v *VersionedBeaconState) Validators() ([]*capella.Validator, error) {
 }
 
 // ValidatorBalances returns the validator balances of the state.
-func (v *VersionedBeaconState) ValidatorBalances() ([]capella.Gwei, error) {
+func (v *VersionedBeaconState) ValidatorBalances() ([]capella.Shor, error) {
 	switch v.Version {
 	case DataVersionCapella:
 		if v.Capella == nil {
@@ -99,7 +99,7 @@ func (v *VersionedBeaconState) DepositRequestsStartIndex() (uint64, error) {
 }
 
 // DepositBalanceToConsume returns the deposit balance to consume of the state.
-func (v *VersionedBeaconState) DepositBalanceToConsume() (capella.Gwei, error) {
+func (v *VersionedBeaconState) DepositBalanceToConsume() (capella.Shor, error) {
 	switch v.Version {
 	case DataVersionCapella:
 		return 0, errors.New("state does not provide deposit balance to consume")
@@ -109,7 +109,7 @@ func (v *VersionedBeaconState) DepositBalanceToConsume() (capella.Gwei, error) {
 }
 
 // ExitBalanceToConsume returns the deposit balance to consume of the state.
-func (v *VersionedBeaconState) ExitBalanceToConsume() (capella.Gwei, error) {
+func (v *VersionedBeaconState) ExitBalanceToConsume() (capella.Shor, error) {
 	switch v.Version {
 	case DataVersionCapella:
 		return 0, errors.New("state does not provide exit balance to consume")
@@ -129,7 +129,7 @@ func (v *VersionedBeaconState) EarliestExitEpoch() (capella.Epoch, error) {
 }
 
 // ConsolidationBalanceToConsume returns the consolidation balance to consume of the state.
-func (v *VersionedBeaconState) ConsolidationBalanceToConsume() (capella.Gwei, error) {
+func (v *VersionedBeaconState) ConsolidationBalanceToConsume() (capella.Shor, error) {
 	switch v.Version {
 	case DataVersionCapella:
 		return 0, errors.New("state does not provide consolidation balance to consume")
@@ -175,9 +175,9 @@ func (v *VersionedBeaconState) ValidatorAtIndex(index capella.ValidatorIndex) (*
 //   - index: The index of the validator whose balance to retrieve
 //
 // Returns:
-//   - capella.Gwei: The balance in Gwei
+//   - capella.Shor: The balance in Shor
 //   - error: If the index is invalid or there's an error accessing the balances
-func (v *VersionedBeaconState) ValidatorBalance(index capella.ValidatorIndex) (capella.Gwei, error) {
+func (v *VersionedBeaconState) ValidatorBalance(index capella.ValidatorIndex) (capella.Shor, error) {
 	balances, err := v.ValidatorBalances()
 	if err != nil {
 		return 0, err

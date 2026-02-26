@@ -13,32 +13,32 @@
 
 package capella_test
 
-// Create a test to verify gwei.unmarshalJSON
+// Create a test to verify shor.unmarshalJSON
 import (
 	"testing"
 
 	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
 )
 
-func TestGweiUnmarshalJSON(t *testing.T) {
+func TestShorUnmarshalJSON(t *testing.T) {
 	// Test cases
 	tests := []struct {
 		name     string
 		input    []byte
-		expected capella.Gwei
+		expected capella.Shor
 		wantErr  bool
 	}{
 		{
 			name:     "Valid input 1000000000",
 			input:    []byte("\"1000000000\""),
-			expected: capella.Gwei(1000000000),
+			expected: capella.Shor(1000000000),
 			wantErr:  false,
 		},
 
 		{
 			name:     "Valid input",
 			input:    []byte("\"1\""),
-			expected: capella.Gwei(1),
+			expected: capella.Shor(1),
 			wantErr:  false,
 		},
 
@@ -59,7 +59,7 @@ func TestGweiUnmarshalJSON(t *testing.T) {
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var g capella.Gwei
+			var g capella.Shor
 			err := g.UnmarshalJSON(tt.input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)

@@ -205,7 +205,7 @@ func (c *consensusClient) NodePeerCount(ctx context.Context) (types.PeerCount, e
 
 // RawDebugBeaconState returns the beacon state in the requested format.
 func (c *consensusClient) RawDebugBeaconState(ctx context.Context, stateID string, contentType string) ([]byte, error) {
-	data, err := c.getRaw(ctx, fmt.Sprintf("/qrl/v2/debug/beacon/states/%s", stateID), contentType)
+	data, err := c.getRaw(ctx, fmt.Sprintf("/qrl/v1/debug/beacon/states/%s", stateID), contentType)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func (c *consensusClient) RawDebugBeaconState(ctx context.Context, stateID strin
 
 // RawBlock returns the block in the requested format.
 func (c *consensusClient) RawBlock(ctx context.Context, stateID string, contentType string) ([]byte, error) {
-	data, err := c.getRaw(ctx, fmt.Sprintf("/qrl/v2/beacon/blocks/%s", stateID), contentType)
+	data, err := c.getRaw(ctx, fmt.Sprintf("/qrl/v1/beacon/blocks/%s", stateID), contentType)
 	if err != nil {
 		return nil, err
 	}

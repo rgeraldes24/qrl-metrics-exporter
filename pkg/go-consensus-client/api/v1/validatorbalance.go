@@ -25,7 +25,7 @@ import (
 // ValidatorBalance contains the balance of a validator.
 type ValidatorBalance struct {
 	Index   capella.ValidatorIndex
-	Balance capella.Gwei
+	Balance capella.Shor
 }
 
 // validatorBalanceJSON is the spec representation of the struct.
@@ -71,7 +71,7 @@ func (v *ValidatorBalance) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for balance")
 	}
 
-	v.Balance = capella.Gwei(balance)
+	v.Balance = capella.Shor(balance)
 
 	return nil
 }

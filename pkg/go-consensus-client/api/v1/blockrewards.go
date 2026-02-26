@@ -25,11 +25,11 @@ import (
 // BlockRewards are the rewards for proposing a block.
 type BlockRewards struct {
 	ProposerIndex     capella.ValidatorIndex
-	Total             capella.Gwei
-	Attestations      capella.Gwei
-	SyncAggregate     capella.Gwei
-	ProposerSlashings capella.Gwei
-	AttesterSlashings capella.Gwei
+	Total             capella.Shor
+	Attestations      capella.Shor
+	SyncAggregate     capella.Shor
+	ProposerSlashings capella.Shor
+	AttesterSlashings capella.Shor
 }
 
 // blockRewardsJSON is the spec representation of the struct.
@@ -83,7 +83,7 @@ func (b *BlockRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for total")
 	}
 
-	b.Total = capella.Gwei(total)
+	b.Total = capella.Shor(total)
 
 	if data.Attestations == "" {
 		return errors.New("attestations missing")
@@ -94,7 +94,7 @@ func (b *BlockRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for attestations")
 	}
 
-	b.Attestations = capella.Gwei(attestations)
+	b.Attestations = capella.Shor(attestations)
 
 	if data.SyncAggregate == "" {
 		return errors.New("sync aggregate missing")
@@ -105,7 +105,7 @@ func (b *BlockRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for sync aggregate")
 	}
 
-	b.SyncAggregate = capella.Gwei(syncAggregate)
+	b.SyncAggregate = capella.Shor(syncAggregate)
 
 	if data.ProposerSlashings == "" {
 		return errors.New("proposer slashings missing")
@@ -116,7 +116,7 @@ func (b *BlockRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for proposer slashings")
 	}
 
-	b.ProposerSlashings = capella.Gwei(proposerSlashings)
+	b.ProposerSlashings = capella.Shor(proposerSlashings)
 
 	if data.AttesterSlashings == "" {
 		return errors.New("attester slashings missing")
@@ -127,7 +127,7 @@ func (b *BlockRewards) UnmarshalJSON(input []byte) error {
 		return errors.Wrap(err, "invalid value for attester slashings")
 	}
 
-	b.AttesterSlashings = capella.Gwei(attesterSlashings)
+	b.AttesterSlashings = capella.Shor(attesterSlashings)
 
 	return nil
 }

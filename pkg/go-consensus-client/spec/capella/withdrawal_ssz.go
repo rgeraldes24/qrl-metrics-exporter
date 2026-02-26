@@ -49,7 +49,7 @@ func (w *Withdrawal) UnmarshalSSZ(buf []byte) error {
 	copy(w.Address[:], buf[16:36])
 
 	// Field (3) 'Amount'
-	w.Amount = Gwei(ssz.UnmarshallUint64(buf[36:44]))
+	w.Amount = Shor(ssz.UnmarshallUint64(buf[36:44]))
 
 	return err
 }

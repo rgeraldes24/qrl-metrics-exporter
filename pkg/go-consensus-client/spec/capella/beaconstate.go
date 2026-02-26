@@ -34,9 +34,9 @@ type BeaconState struct {
 	ExecutionDataVotes           []*ExecutionData `dynssz-max:"EPOCHS_PER_EXECUTION_VOTING_PERIOD*SLOTS_PER_EPOCH" ssz-max:"2048"`
 	ExecutionDepositIndex        uint64
 	Validators                   []*Validator         `dynssz-max:"VALIDATOR_REGISTRY_LIMIT"         ssz-max:"1099511627776"`
-	Balances                     []Gwei               `dynssz-max:"VALIDATOR_REGISTRY_LIMIT"         ssz-max:"1099511627776"`
+	Balances                     []Shor               `dynssz-max:"VALIDATOR_REGISTRY_LIMIT"         ssz-max:"1099511627776"`
 	RANDAOMixes                  []Root               `dynssz-size:"EPOCHS_PER_HISTORICAL_VECTOR,32" ssz-size:"65536,32"`
-	Slashings                    []Gwei               `dynssz-size:"EPOCHS_PER_SLASHINGS_VECTOR"     ssz-size:"1024"`
+	Slashings                    []Shor               `dynssz-size:"EPOCHS_PER_SLASHINGS_VECTOR"     ssz-size:"1024"`
 	PreviousEpochParticipation   []ParticipationFlags `dynssz-max:"VALIDATOR_REGISTRY_LIMIT"         ssz-max:"1099511627776"`
 	CurrentEpochParticipation    []ParticipationFlags `dynssz-max:"VALIDATOR_REGISTRY_LIMIT"         ssz-max:"1099511627776"`
 	JustificationBits            bitfield.Bitvector4  `ssz-size:"1"`

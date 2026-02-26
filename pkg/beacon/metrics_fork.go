@@ -97,7 +97,7 @@ func (f *ForkMetrics) Start(ctx context.Context) error {
 func (f *ForkMetrics) Stop() error {
 	return nil
 }
-func (f *ForkMetrics) calculateCurrent(ctx context.Context) error {
+func (f *ForkMetrics) calculateCurrent(context.Context) error {
 	slot := f.beacon.Wallclock().Slots().Current()
 
 	spec, err := f.beacon.Spec()

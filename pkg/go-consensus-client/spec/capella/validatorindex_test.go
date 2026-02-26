@@ -13,7 +13,7 @@
 
 package capella_test
 
-// Create a test to verify gwei.unmarshalJSON
+// Create a test to verify shor.unmarshalJSON
 import (
 	"testing"
 

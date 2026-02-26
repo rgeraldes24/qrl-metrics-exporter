@@ -287,7 +287,7 @@ func (v *VersionedProposal) GasLimit() (uint64, error) {
 	}
 }
 
-// Value returns the value of the proposal, in Wei.
+// Value returns the value of the proposal, in Planck.
 func (v *VersionedProposal) Value() *big.Int {
 	value := big.NewInt(0)
 	if v.ConsensusValue != nil {

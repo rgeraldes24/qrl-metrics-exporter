@@ -165,7 +165,7 @@ func (v ValidatorState) valid() bool {
 
 // ValidatorToState is a helper that calculates the validator status given a validator struct.
 func ValidatorToState(validator *capella.Validator,
-	balance *capella.Gwei,
+	balance *capella.Shor,
 	currentEpoch capella.Epoch,
 	farFutureEpoch capella.Epoch,
 ) ValidatorState {

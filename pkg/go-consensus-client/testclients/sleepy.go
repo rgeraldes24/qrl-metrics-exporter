@@ -460,7 +460,7 @@ func (s *Sleepy) Spec(ctx context.Context,
 func (s *Sleepy) ValidatorBalances(ctx context.Context,
 	opts *api.ValidatorBalancesOpts,
 ) (
-	*api.Response[map[capella.ValidatorIndex]capella.Gwei],
+	*api.Response[map[capella.ValidatorIndex]capella.Shor],
 	error,
 ) {
 	s.sleep(ctx)

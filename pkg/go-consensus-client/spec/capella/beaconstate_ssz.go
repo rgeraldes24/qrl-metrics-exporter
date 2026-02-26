@@ -356,9 +356,9 @@ func (b *BeaconState) UnmarshalSSZ(buf []byte) error {
 	}
 
 	// Field (14) 'Slashings'
-	b.Slashings = make([]Gwei, 1024)
+	b.Slashings = make([]Shor, 1024)
 	for ii := 0; ii < 1024; ii++ {
-		b.Slashings[ii] = Gwei(ssz.UnmarshallUint64(buf[2162960:2171152][ii*8 : (ii+1)*8]))
+		b.Slashings[ii] = Shor(ssz.UnmarshallUint64(buf[2162960:2171152][ii*8 : (ii+1)*8]))
 	}
 
 	// Offset (15) 'PreviousEpochParticipation'
@@ -494,9 +494,9 @@ func (b *BeaconState) UnmarshalSSZ(buf []byte) error {
 		if err != nil {
 			return err
 		}
-		b.Balances = make([]Gwei, num)
+		b.Balances = make([]Shor, num)
 		for ii := 0; ii < num; ii++ {
-			b.Balances[ii] = Gwei(ssz.UnmarshallUint64(buf[ii*8 : (ii+1)*8]))
+			b.Balances[ii] = Shor(ssz.UnmarshallUint64(buf[ii*8 : (ii+1)*8]))
 		}
 	}
 

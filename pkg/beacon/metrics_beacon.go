@@ -186,8 +186,8 @@ func NewBeaconMetrics(beac Node, log logrus.FieldLogger, namespace string, const
 		WithdrawalsAmount: *prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Namespace:   namespace,
-				Name:        "withdrawals_amount_gwei",
-				Help:        "The sum amount of all the withdrawals in the block (in gwei).",
+				Name:        "withdrawals_amount_shor",
+				Help:        "The sum amount of all the withdrawals in the block (in shor).",
 				ConstLabels: constLabels,
 			},
 			[]string{
@@ -471,14 +471,14 @@ func (b *BeaconMetrics) recordNewBeaconBlock(blockID string, block *spec.Version
 
 	withdrawals, err := block.Withdrawals()
 	if err == nil {
-		var gwei uint64
+		var shor uint64
 
 		var indexMax uint64
 
 		indexMin := uint64(math.MaxUint64)
 
 		for _, withdrawal := range withdrawals {
-			gwei += uint64(withdrawal.Amount)
+			shor += uint64(withdrawal.Amount)
 
 			index := uint64(withdrawal.Index)
 			if index > indexMax {
@@ -490,7 +490,7 @@ func (b *BeaconMetrics) recordNewBeaconBlock(blockID string, block *spec.Version
 			}
 		}
 
-		b.WithdrawalsAmount.WithLabelValues(blockID, version).Set(float64(gwei))
+		b.WithdrawalsAmount.WithLabelValues(blockID, version).Set(float64(shor))
 		b.Withdrawals.WithLabelValues(blockID, version).Set(float64(len(withdrawals)))
 
 		if indexMax > 0 {

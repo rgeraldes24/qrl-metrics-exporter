@@ -45,7 +45,7 @@ func (s *Service) SignedBeaconBlock(ctx context.Context,
 		return nil, errors.Join(errors.New("no block specified"), client.ErrInvalidOptions)
 	}
 
-	endpoint := fmt.Sprintf("/qrl/v2/beacon/blocks/%s", opts.Block)
+	endpoint := fmt.Sprintf("/qrl/v1/beacon/blocks/%s", opts.Block)
 
 	httpResponse, err := s.get(ctx, endpoint, "", &opts.Common, true)
 	if err != nil {

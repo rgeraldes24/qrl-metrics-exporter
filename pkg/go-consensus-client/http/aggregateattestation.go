@@ -44,7 +44,7 @@ func (s *Service) AggregateAttestation(ctx context.Context,
 		return nil, errors.Join(errors.New("no attestation data root specified"), client.ErrInvalidOptions)
 	}
 
-	endpoint := "/qrl/v2/validator/aggregate_attestation"
+	endpoint := "/qrl/v1/validator/aggregate_attestation"
 	query := fmt.Sprintf("slot=%d&attestation_data_root=%#x&committee_index=%d",
 		opts.Slot, opts.AttestationDataRoot, opts.CommitteeIndex)
 

@@ -604,7 +604,7 @@ func (s *Erroring) Spec(ctx context.Context,
 func (s *Erroring) ValidatorBalances(ctx context.Context,
 	opts *api.ValidatorBalancesOpts,
 ) (
-	*api.Response[map[capella.ValidatorIndex]capella.Gwei],
+	*api.Response[map[capella.ValidatorIndex]capella.Shor],
 	error,
 ) {
 	if err := s.maybeError(ctx); err != nil {
