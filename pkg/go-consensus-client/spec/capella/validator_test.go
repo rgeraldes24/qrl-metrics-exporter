@@ -16,6 +16,8 @@ package capella_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -25,6 +27,10 @@ import (
 )
 
 func TestValidatorJSON(t *testing.T) {
+	validPubKey := "0x" + strings.Repeat("11", capella.PublicKeyLength)
+	shortPubKey := "0x" + strings.Repeat("11", capella.PublicKeyLength-1)
+	longPubKey := "0x" + strings.Repeat("11", capella.PublicKeyLength+1)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -56,122 +62,122 @@ func TestValidatorJSON(t *testing.T) {
 		},
 		{
 			name:  "PublicKeyShort",
-			input: []byte(`{"pubkey":"0x9bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
-			err:   "incorrect length 47 for public key",
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, shortPubKey)),
+			err:   fmt.Sprintf("incorrect length %d for public key", capella.PublicKeyLength-1),
 		},
 		{
 			name:  "PublicKeyLong",
-			input: []byte(`{"pubkey":"0xb8b89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
-			err:   "incorrect length 49 for public key",
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, longPubKey)),
+			err:   fmt.Sprintf("incorrect length %d for public key", capella.PublicKeyLength+1),
 		},
 		{
 			name:  "WithdrawalCredentialsMissing",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "withdrawal credentials missing",
 		},
 		{
 			name:  "WithdrawalCredentialsWrongType",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":true,"effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":true,"effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field validatorJSON.withdrawal_credentials of type string",
 		},
 		{
 			name:  "WithdrawalCredentialsInvalid",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"invalid","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"invalid","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid value for withdrawal credentials: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "WithdrawalCredentialsShort",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0xec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0xec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "incorrect length 31 for withdrawal credentials",
 		},
 		{
 			name:  "WithdrawalCredentialsLong",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x0000ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x0000ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "incorrect length 33 for withdrawal credentials",
 		},
 		{
 			name:  "EffectiveBalanceMissing",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "effective balance missing",
 		},
 		{
 			name:  "EffectiveBalanceWrongType",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":true,"slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":true,"slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field validatorJSON.effective_balance of type string",
 		},
 		{
 			name:  "EffectiveBalanceInvalid",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"-1","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"-1","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid value for effective balance: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
 			name:  "SlashedWrongType",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":"false","activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":"false","activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid JSON: json: cannot unmarshal string into Go struct field validatorJSON.slashed of type bool",
 		},
 		{
 			name:  "ActivationEligibilityEpochMissing",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "activation eligibility epoch missing",
 		},
 		{
 			name:  "ActivationEligibilityEpochWrongType",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":true,"activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":true,"activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field validatorJSON.activation_eligibility_epoch of type string",
 		},
 		{
 			name:  "ActivationEligibilityInvalid",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"-1","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"-1","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid value for activation eligibility epoch: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
 			name:  "ActivationEpochMissing",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "activation epoch missing",
 		},
 		{
 			name:  "ActivationEligibilityEpochWrongType",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":true,"exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":true,"exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field validatorJSON.activation_epoch of type string",
 		},
 		{
 			name:  "ActivationInvalid",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"-1","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"-1","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid value for activation epoch: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
 			name:  "ExitEpochMissing",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "exit epoch missing",
 		},
 		{
 			name:  "ExitEligibilityEpochWrongType",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":true,"withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":true,"withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field validatorJSON.exit_epoch of type string",
 		},
 		{
 			name:  "ExitInvalid",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"-1","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"-1","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "invalid value for exit epoch: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
 			name:  "WithdrawableEpochMissing",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615"}`, validPubKey)),
 			err:   "withdrawable epoch missing",
 		},
 		{
 			name:  "WithdrawableEligibilityEpochWrongType",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":true}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":true}`, validPubKey)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field validatorJSON.withdrawable_epoch of type string",
 		},
 		{
 			name:  "WithdrawableInvalid",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"-1"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"-1"}`, validPubKey)),
 			err:   "invalid value for withdrawable epoch: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
 			name:  "Good",
-			input: []byte(`{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`),
+			input: []byte(fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)),
 		},
 	}
 
@@ -193,6 +199,7 @@ func TestValidatorJSON(t *testing.T) {
 }
 
 func TestValidatorYAML(t *testing.T) {
+	validPubKey := "0x" + strings.Repeat("11", capella.PublicKeyLength)
 	tests := []struct {
 		name  string
 		input []byte
@@ -201,7 +208,7 @@ func TestValidatorYAML(t *testing.T) {
 	}{
 		{
 			name:  "Good",
-			input: []byte(`{pubkey: '0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b', withdrawal_credentials: '0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594', effective_balance: 32000000000, slashed: false, activation_eligibility_epoch: 0, activation_epoch: 0, exit_epoch: 18446744073709551615, withdrawable_epoch: 18446744073709551615}`),
+			input: []byte(fmt.Sprintf("{pubkey: '%s', withdrawal_credentials: '0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594', effective_balance: 32000000000, slashed: false, activation_eligibility_epoch: 0, activation_epoch: 0, exit_epoch: 18446744073709551615, withdrawable_epoch: 18446744073709551615}", validPubKey)),
 		},
 	}
 

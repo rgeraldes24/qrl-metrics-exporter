@@ -32,7 +32,7 @@ func TestHexBigUnmarshal(t *testing.T) {
 	b := big.Int{}
 	b.SetString("23949082357483433297453", 10)
 
-	require.Equal(t, hexBig(b), test.ID)
+	requireBigIntEqual(t, b, big.Int(test.ID))
 }
 
 func TestSyncingUnmarshal(t *testing.T) {
@@ -80,13 +80,13 @@ func TestTransactionUnmarshal(t *testing.T) {
 	require.Equal(t, 537369, *tx.BlockNumber)
 	require.Equal(t, "0x201354729f8d0f8b64e9a0c353c672c6a66b3857", tx.From)
 	require.Equal(t, 90000, tx.Gas)
-	require.Equal(t, *big.NewInt(20000000000), tx.GasPrice)
+	requireBigIntEqual(t, *big.NewInt(20000000000), tx.GasPrice)
 	require.Equal(t, "0xfc7dcd42eb0b7898af2f52f7c5af3bd03cdf71ab8b3ed5b3d3a3ff0d91343cbe", tx.Hash)
 	require.Equal(t, "0xe1fa8e8425f1af44eb895e4900b8be35d9fdc28744a6ef491c46ec8601990e12a58af0ed", tx.Input)
 	require.Equal(t, 27553, tx.Nonce)
 	require.Equal(t, "0xd10e3be2bc8f959bc8c41cf65f60de721cf89adf", tx.To)
 	require.Equal(t, 3, *tx.TransactionIndex)
-	require.Equal(t, *big.NewInt(0), tx.Value)
+	requireBigIntEqual(t, *big.NewInt(0), tx.Value)
 }
 
 func TestLogUnmarshal(t *testing.T) {

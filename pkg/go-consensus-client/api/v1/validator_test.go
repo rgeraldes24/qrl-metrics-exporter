@@ -15,14 +15,20 @@ package v1_test
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	require "github.com/stretchr/testify/require"
 	api "github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/api/v1"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
 )
 
 func TestValidatorJSON(t *testing.T) {
+	validPubKey := "0x" + strings.Repeat("11", capella.PublicKeyLength)
+	validValidator := fmt.Sprintf(`{"pubkey":"%s","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}`, validPubKey)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -39,42 +45,42 @@ func TestValidatorJSON(t *testing.T) {
 		},
 		{
 			name:  "IndexMissing",
-			input: []byte(`{"balance":"32000000000","status":"active_ongoing","validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: fmt.Appendf(nil, `{"balance":"32000000000","status":"active_ongoing","validator":%s}`, validValidator),
 			err:   "index missing",
 		},
 		{
 			name:  "IndexWrongType",
-			input: []byte(`{"index":true,"balance":"32000000000","status":"active_ongoing","validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: fmt.Appendf(nil, `{"index":true,"balance":"32000000000","status":"active_ongoing","validator":%s}`, validValidator),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field validatorJSON.index of type string",
 		},
 		{
 			name:  "IndexInvalid",
-			input: []byte(`{"index":"-1","balance":"32000000000","status":"active_ongoing","validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: fmt.Appendf(nil, `{"index":"-1","balance":"32000000000","status":"active_ongoing","validator":%s}`, validValidator),
 			err:   "invalid value for index: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
 			name:  "BalanceMissing",
-			input: []byte(`{"index":"1","status":"active_ongoing","validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: []byte(fmt.Sprintf(`{"index":"1","status":"active_ongoing","validator":%s}`, validValidator)),
 			err:   "balance missing",
 		},
 		{
 			name:  "BalanceWrongType",
-			input: []byte(`{"index":"1","balance":true,"status":"active_ongoing","validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: fmt.Appendf(nil, `{"index":"1","balance":true,"status":"active_ongoing","validator":%s}`, validValidator),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field validatorJSON.balance of type string",
 		},
 		{
 			name:  "BalanceInvalid",
-			input: []byte(`{"index":"1","balance":"-1","status":"active_ongoing","validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: fmt.Appendf(nil, `{"index":"1","balance":"-1","status":"active_ongoing","validator":%s}`, validValidator),
 			err:   "invalid value for balance: strconv.ParseUint: parsing \"-1\": invalid syntax",
 		},
 		{
 			name:  "StateWrongType",
-			input: []byte(`{"index":"1","balance":"32000000000","status":true,"validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: fmt.Appendf(nil, `{"index":"1","balance":"32000000000","status":true,"validator":%s}`, validValidator),
 			err:   "invalid JSON: unrecognised validator state true",
 		},
 		{
 			name:  "StateInvalid",
-			input: []byte(`{"index":"1","balance":"32000000000","status":"invalid","validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: fmt.Appendf(nil, `{"index":"1","balance":"32000000000","status":"invalid","validator":%s}`, validValidator),
 			err:   "invalid JSON: unrecognised validator state \"invalid\"",
 		},
 		{
@@ -94,7 +100,7 @@ func TestValidatorJSON(t *testing.T) {
 		},
 		{
 			name:  "Good",
-			input: []byte(`{"index":"1","balance":"32000000000","status":"active_ongoing","validator":{"pubkey":"0xb89bebc699769726a318c8e9971bd3171297c61aea4a6578a7a4f94b547dcba5bac16a89108b6b6a1fe3695d1a874a0b","withdrawal_credentials":"0x00ec7ef7780c9d151597924036262dd28dc60e1228f4da6fecf9d402cb3f3594","effective_balance":"32000000000","slashed":false,"activation_eligibility_epoch":"0","activation_epoch":"0","exit_epoch":"18446744073709551615","withdrawable_epoch":"18446744073709551615"}}`),
+			input: fmt.Appendf(nil, `{"index":"1","balance":"32000000000","status":"active_ongoing","validator":%s}`, validValidator),
 		},
 	}
 

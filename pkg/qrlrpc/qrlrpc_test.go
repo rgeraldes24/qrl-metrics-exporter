@@ -321,7 +321,7 @@ func (s *QRLRPCTestSuite) TestQRLGasPrice() {
 	expected, _ := big.NewInt(0).SetString("09184e72a000", 16)
 	gasPrice, err = s.rpc.QRLGasPrice()
 	s.Require().Nil(err)
-	s.Require().Equal(*expected, gasPrice)
+	requireBigIntEqual(s.T(), *expected, gasPrice)
 }
 
 func (s *QRLRPCTestSuite) TestQRLAccounts() {
@@ -364,7 +364,7 @@ func (s *QRLRPCTestSuite) TestQRLGetBalance() {
 	expected, _ := big.NewInt(0).SetString("21376347749069564217796", 10)
 	balance, err = s.rpc.QRLGetBalance(address, "latest")
 	s.Require().Nil(err)
-	s.Require().Equal(*expected, balance)
+	requireBigIntEqual(s.T(), *expected, balance)
 }
 
 func (s *QRLRPCTestSuite) TestQRLGetStorageAt() {
@@ -595,7 +595,7 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	s.Require().Equal(1504007869, block.Timestamp)
 	s.Require().Equal(2, len(block.Transactions))
 
-	s.Require().Equal(Transaction{
+	s.requireTransactionEqual(Transaction{
 		Hash:             "0xf519ca0e9ceeb0405dfeb95544179f557e3221213f07e33709af7ced60ab61b9",
 		Nonce:            10395,
 		BlockHash:        block.Hash,
@@ -609,7 +609,7 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 		Input:            "0x",
 	}, block.Transactions[0])
 
-	s.Require().Equal(Transaction{
+	s.requireTransactionEqual(Transaction{
 		Hash:             "0xa72743a3608e2ae7b3d1cc1f0e3ceed9a1c78d803eba5f28d5d6908adfaa211c",
 		Nonce:            450,
 		BlockHash:        block.Hash,
@@ -668,7 +668,7 @@ func (s *QRLRPCTestSuite) TestGetBlock() {
 	s.Require().Equal(120603, block.GasUsed)
 	s.Require().Equal(1505109779, block.Timestamp)
 	s.Require().Equal(1, len(block.Transactions))
-	s.Require().Equal(Transaction{
+	s.requireTransactionEqual(Transaction{
 		Hash:             "0x160e19780a24f3d78492c7ac7228e0220d4b96878fec19daf182e1d8c4b3d94e",
 		Nonce:            0,
 		BlockHash:        "",
@@ -860,9 +860,9 @@ func (s *QRLRPCTestSuite) TestGetTransaction() {
 	s.Require().Equal(152, *transaction.TransactionIndex)
 	s.Require().Equal("0xe3a7ca9d2306b0dc900ea618648bed9ec6cb1106", transaction.From)
 	s.Require().Equal("0x8d12a197cb00d4747a1fe03395095ce2a5cc6819", transaction.To)
-	s.Require().Equal(newBigInt("10000000000000"), transaction.Value)
+	requireBigIntEqual(s.T(), newBigInt("10000000000000"), transaction.Value)
 	s.Require().Equal(250000, transaction.Gas)
-	s.Require().Equal(newBigInt("4000000000"), transaction.GasPrice)
+	requireBigIntEqual(s.T(), newBigInt("4000000000"), transaction.GasPrice)
 	s.Require().Equal("0x522", transaction.Input)
 }
 
@@ -1113,6 +1113,20 @@ func TestQRL1(t *testing.T) {
 
 func ptrInt(i int) *int {
 	return &i
+}
+
+func (s *QRLRPCTestSuite) requireTransactionEqual(expected, actual Transaction) {
+	s.Require().Equal(expected.Hash, actual.Hash)
+	s.Require().Equal(expected.Nonce, actual.Nonce)
+	s.Require().Equal(expected.BlockHash, actual.BlockHash)
+	s.Require().Equal(expected.BlockNumber, actual.BlockNumber)
+	s.Require().Equal(expected.TransactionIndex, actual.TransactionIndex)
+	s.Require().Equal(expected.From, actual.From)
+	s.Require().Equal(expected.To, actual.To)
+	requireBigIntEqual(s.T(), expected.Value, actual.Value)
+	s.Require().Equal(expected.Gas, actual.Gas)
+	requireBigIntEqual(s.T(), expected.GasPrice, actual.GasPrice)
+	s.Require().Equal(expected.Input, actual.Input)
 }
 
 func newBigInt(s string) big.Int {

@@ -5,7 +5,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+func requireBigIntEqual(t require.TestingT, want, got big.Int) {
+	require.Zero(t, want.Cmp(&got), "expected %s, got %s", want.String(), got.String())
+}
 
 func TestParseInt(t *testing.T) {
 	i, err := ParseInt("0x143")
