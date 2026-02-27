@@ -15,16 +15,19 @@ package v1_test
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	require "github.com/stretchr/testify/require"
 	api "github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/api/v1"
+	"github.com/theQRL/qrl-metrics-exporter/pkg/go-consensus-client/spec/capella"
 )
 
 func TestBeaconBlockHeaderJSON(t *testing.T) {
-	// TODO(rgeraldes24)
-	t.Skip()
+	validSignature := "0x" + strings.Repeat("61", capella.SignatureLength)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -41,57 +44,57 @@ func TestBeaconBlockHeaderJSON(t *testing.T) {
 		},
 		{
 			name:  "RootMissing",
-			input: []byte(`{"canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"0xa8d684242ee025ee96e877b28433d93176072b8c8e8295609501863147bb1d174b8a16aed661d001f30859c9e42c0f9d18ea35786a9bdf115dff1877980046e19e0e4c9310e281f8129f2692ddc4680673ab78b7f8db72f91be7863dd9fe1e55"}}`),
+			input: []byte(fmt.Sprintf(`{"canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"%s"}}`, validSignature)),
 			err:   "root missing",
 		},
 		{
 			name:  "RootWrongType",
-			input: []byte(`{"root":true,"canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"0xa8d684242ee025ee96e877b28433d93176072b8c8e8295609501863147bb1d174b8a16aed661d001f30859c9e42c0f9d18ea35786a9bdf115dff1877980046e19e0e4c9310e281f8129f2692ddc4680673ab78b7f8db72f91be7863dd9fe1e55"}}`),
+			input: []byte(fmt.Sprintf(`{"root":true,"canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"%s"}}`, validSignature)),
 			err:   "invalid JSON: json: cannot unmarshal bool into Go struct field beaconBlockHeaderJSON.root of type string",
 		},
 		{
 			name:  "RootInvalid",
-			input: []byte(`{"root":"invalid","canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"0xa8d684242ee025ee96e877b28433d93176072b8c8e8295609501863147bb1d174b8a16aed661d001f30859c9e42c0f9d18ea35786a9bdf115dff1877980046e19e0e4c9310e281f8129f2692ddc4680673ab78b7f8db72f91be7863dd9fe1e55"}}`),
+			input: []byte(fmt.Sprintf(`{"root":"invalid","canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"%s"}}`, validSignature)),
 			err:   "invalid value for root: encoding/hex: invalid byte: U+0069 'i'",
 		},
 		{
 			name:  "RootShort",
-			input: []byte(`{"root":"0x354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"0xa8d684242ee025ee96e877b28433d93176072b8c8e8295609501863147bb1d174b8a16aed661d001f30859c9e42c0f9d18ea35786a9bdf115dff1877980046e19e0e4c9310e281f8129f2692ddc4680673ab78b7f8db72f91be7863dd9fe1e55"}}`),
+			input: []byte(fmt.Sprintf(`{"root":"0x354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"%s"}}`, validSignature)),
 			err:   "incorrect length 31 for root",
 		},
 		{
 			name:  "RootLong",
-			input: []byte(`{"root":"0xbcbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"0xa8d684242ee025ee96e877b28433d93176072b8c8e8295609501863147bb1d174b8a16aed661d001f30859c9e42c0f9d18ea35786a9bdf115dff1877980046e19e0e4c9310e281f8129f2692ddc4680673ab78b7f8db72f91be7863dd9fe1e55"}}`),
+			input: []byte(fmt.Sprintf(`{"root":"0xbcbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"%s"}}`, validSignature)),
 			err:   "incorrect length 33 for root",
 		},
 		{
 			name:  "CanonicalWrongType",
-			input: []byte(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":"true","header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"0xa8d684242ee025ee96e877b28433d93176072b8c8e8295609501863147bb1d174b8a16aed661d001f30859c9e42c0f9d18ea35786a9bdf115dff1877980046e19e0e4c9310e281f8129f2692ddc4680673ab78b7f8db72f91be7863dd9fe1e55"}}`),
+			input: []byte(fmt.Sprintf(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":"true","header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"%s"}}`, validSignature)),
 			err:   "invalid JSON: json: cannot unmarshal string into Go struct field beaconBlockHeaderJSON.canonical of type bool",
 		},
 		{
 			name:  "CanonicalInvalid",
-			input: []byte(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":maybe,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"0xa8d684242ee025ee96e877b28433d93176072b8c8e8295609501863147bb1d174b8a16aed661d001f30859c9e42c0f9d18ea35786a9bdf115dff1877980046e19e0e4c9310e281f8129f2692ddc4680673ab78b7f8db72f91be7863dd9fe1e55"}}`),
+			input: []byte(fmt.Sprintf(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":maybe,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"%s"}}`, validSignature)),
 			err:   "invalid character 'm' looking for beginning of value",
 		},
 		{
 			name:  "HeaderMissing",
-			input: []byte(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true}`),
+			input: []byte(fmt.Sprintf(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"signature":"%s"}`, validSignature)),
 			err:   "header missing",
 		},
 		{
 			name:  "HeaderWrongType",
-			input: []byte(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":true}`),
+			input: []byte(fmt.Sprintf(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":true,"signature":"%s"}`, validSignature)),
 			err:   "invalid JSON: invalid JSON: json: cannot unmarshal bool into Go value of type capella.signedBeaconBlockHeaderJSON",
 		},
 		{
 			name:  "HeaderInvalid",
-			input: []byte(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":{}}`),
+			input: []byte(fmt.Sprintf(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":{"signature":"%s"}}`, validSignature)),
 			err:   "invalid JSON: message missing",
 		},
 		{
 			name:  "Good",
-			input: []byte(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"0xa8d684242ee025ee96e877b28433d93176072b8c8e8295609501863147bb1d174b8a16aed661d001f30859c9e42c0f9d18ea35786a9bdf115dff1877980046e19e0e4c9310e281f8129f2692ddc4680673ab78b7f8db72f91be7863dd9fe1e55"}}`),
+			input: []byte(fmt.Sprintf(`{"root":"0xbc354f1a5f27f8d096eee9e6b6139e1b730385f9752513832a57c9849a149df7","canonical":true,"header":{"message":{"slot":"585321","proposer_index":"29787","parent_root":"0xba4d784293df28bab771a14df58cdbed9d8d64afd0ddf1c52dff3e25fcdd51df","state_root":"0x4e405274abd4f59c6a2268b4e6ca93dba01e15ae6b56401fb20a1ad9701b036d","body_root":"0x57bb79520694c132a35dc887cac2e4dad9acc5ded58b5ae66b491644ab8835c8"},"signature":"%s"}}`, validSignature)),
 		},
 	}
 

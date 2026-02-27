@@ -16,6 +16,8 @@ package capella_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -129,8 +131,8 @@ func TestDepositMessageJSON(t *testing.T) {
 }
 
 func TestDepositMessageYAML(t *testing.T) {
-	// TODO(rgeraldes24)
-	t.Skip()
+	validPubKey := "0x" + strings.Repeat("11", capella.PublicKeyLength)
+
 	tests := []struct {
 		name  string
 		input []byte
@@ -139,7 +141,7 @@ func TestDepositMessageYAML(t *testing.T) {
 	}{
 		{
 			name:  "Good",
-			input: []byte(`{pubkey: '0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f', withdrawal_credentials: '0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f', amount: 32000000000}`),
+			input: []byte(fmt.Sprintf("{pubkey: '%s', withdrawal_credentials: '0x202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f', amount: 32000000000}", validPubKey)),
 		},
 	}
 
